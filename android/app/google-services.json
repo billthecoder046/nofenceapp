@@ -1,0 +1,142 @@
+{
+  "project_info": {
+    "project_number": "856668204005",
+    "project_id": "billnews-c5913",
+    "storage_bucket": "billnews-c5913.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856668204005:android:c5fd9ba8ce08a1893a1d0c",
+        "android_client_info": {
+          "package_name": "com.billnews.billnewsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856668204005-6ln1iu8hsvuj8brndcfua0ofa508b6c8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.billnews.billnewsapp",
+            "certificate_hash": "fa5ac3e6108f4edc2728b045027286a5983ff5f0"
+          }
+        },
+        {
+          "client_id": "856668204005-cjir18nurc1sa1iu2jjvlu0j5m5d74ff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.billnews.billnewsapp",
+            "certificate_hash": "1971a3948b4920fa9c324a8706f582ecbae6080f"
+          }
+        },
+        {
+          "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkzGmuxNKInvG-X1gWt3H1Rv1kg8cH7iI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "856668204005-og3ijc6ld5ot1jc1r28131vbps3vo2e3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mrblab.newshourapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856668204005:android:799cfbc270043c0d3a1d0c",
+        "android_client_info": {
+          "package_name": "mrblab.news_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856668204005-1dhnm9t5j6cgr68agh6d8loebt4p8p1g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mrblab.news_app",
+            "certificate_hash": "1971a3948b4920fa9c324a8706f582ecbae6080f"
+          }
+        },
+        {
+          "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkzGmuxNKInvG-X1gWt3H1Rv1kg8cH7iI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "856668204005-og3ijc6ld5ot1jc1r28131vbps3vo2e3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mrblab.newshourapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856668204005:android:0015014f6617917d3a1d0c",
+        "android_client_info": {
+          "package_name": "mrblab.nofence"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkzGmuxNKInvG-X1gWt3H1Rv1kg8cH7iI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856668204005-43f5nibjkehkp74f92s7gca1q8g1ql1e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "856668204005-og3ijc6ld5ot1jc1r28131vbps3vo2e3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mrblab.newshourapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

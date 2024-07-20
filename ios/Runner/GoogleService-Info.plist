@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>856668204005-l1fvu6s902jor692j93jqn8nd6h06g75.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.856668204005-l1fvu6s902jor692j93jqn8nd6h06g75</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>856668204005-1dhnm9t5j6cgr68agh6d8loebt4p8p1g.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCyUVqoMavQGQprMw367X0EM8e6GIUbrEE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>856668204005</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.nofence.skillzupp.nofence</string>
+	<key>PROJECT_ID</key>
+	<string>billnews-c5913</string>
+	<key>STORAGE_BUCKET</key>
+	<string>billnews-c5913.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:856668204005:ios:83f64667ab3d9abe3a1d0c</string>
+</dict>
+</plist>

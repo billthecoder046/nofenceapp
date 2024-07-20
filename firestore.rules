@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    match /users/{userId} {
+    	allow read: if true;
+      allow write: if isUserSignedIn() && request.auth.uid == userId;
+    }
+    
+    match /contents/{id} {
+    	allow read : if true;
+      allow create: if isUserSignedIn() && isAdmin();
+      allow update: if
+      	(request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']))
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['loves']))
+      	|| isAdmin();
+      allow delete : if isUserSignedIn() && isAdmin();
+    }
+    
+    match /contents/{id}/comments/{commentId} {
+    	allow read : if true;
+      allow write: if isUserSignedIn() || isAdmin();
+    }
+    
+    match /categories/{document=**} {
+    	allow read : if true;
+      allow write: if isUserSignedIn() && isAdmin();
+    }
+    
+    match /admin/{document=**} {
+    	allow read: if true;
+      allow create, update: if isUserSignedIn() && isAdmin();
+    }
+    
+    match /item_count/{document=**} {
+    	allow read: if true;
+      allow create, update: if isUserSignedIn() || isAdmin();
+    }
+    
+    match /featured/{document=**} {
+    	allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /notifications/{document=**} {
+    	allow read: if true;
+      allow write: if isUserSignedIn() && isAdmin();
+    }
+    
+    match /user_reports/{document=**}{
+    	allow read, create: if true;
+      allow update, delete: if false;
+    }
+    
+    match /drafts/{id} {
+    	allow read : if true;
+      allow write: if isUserSignedIn() && isAdmin();
+    }
+    
+    function isUserSignedIn (){
+    	return request.auth != null;
+    }
+    
+    function isAdmin (){
+    	return "admin" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    
+  }
+}
