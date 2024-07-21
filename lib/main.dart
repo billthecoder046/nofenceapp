@@ -12,6 +12,10 @@ import 'firebase_options.dart';
 
 void main()async {
   print("This is AI Start APP");
+  print("This is AI Start APP");
+  print("This is AI Start APP");
+  print("This is AI Start APP");
+
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(
