@@ -3,23 +3,20 @@ import 'package:flutter/material.dart';
 class Config{
 
   
-  final String appName = 'NewsHour';
+  final String appName = 'nofence';
   final String splashIcon = 'assets/images/splash.png';
-  final String supportEmail = 'YOUR_EMAIL';
-  final String privacyPolicyUrl = 'https://www.mrb-lab.com/privacy-policy';
-  final String ourWebsiteUrl = 'https://www.mrb-lab.com';
+  final String supportEmail = 'billthecoder046@gmail.com';
+  final String privacyPolicyUrl = 'https://drive.google.com/file/d/1dyA59UfoY_EFL_pINTq-B1aM7IrZGsuE/view?usp=sharing';
+  final String ourWebsiteUrl = 'https://tellooapp.com';
   final String iOSAppId = '000000';
-
   
   //social links
-  static const String facebookPageUrl = 'https://www.facebook.com/mrblab24';
+  static const String facebookPageUrl = 'https://www.facebook.com/skillzupp';
   static const String youtubeChannelUrl = 'https://www.youtube.com/channel/UCnNr2eppWVVo-NpRIy1ra7A';
   static const String twitterUrl = 'https://twitter.com/FlutterDev';
   
   //app theme color
   final Color appColor = Colors.deepPurpleAccent;
-
-
 
   //Intro images
   final String introImage1 = 'assets/images/news1.png';
@@ -45,4 +42,33 @@ class Config{
     'Politics',
     'Travel'
   ];
+  final List initialCategories2 = [
+    'Murders',
+    'Theft',
+    'Accusations',
+    'Divorces',
+    'Property Issues'
+  ];
+}
+enum CrimeType {
+  murder,
+  theft,
+  assault,
+  robbery,
+  vandalism,
+  fraud,
+  burglary,
+  arson,
+  kidnapping,
+  sexualAssault,
+  drugTrafficking,
+  domesticViolence,
+  harassment,
+  stalking,
+  identityTheft,
+  cybercrime,
+  extortion,
+  embezzlement,
+  moneyLaundering,
+  other,
 }

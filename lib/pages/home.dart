@@ -11,6 +11,8 @@ import 'package:nofence/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import 'crime.dart';
+
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
@@ -23,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController();
 
   List<IconData> iconList = [
+    Feather.x_circle,
     Feather.home,
     Feather.youtube,
     Feather.grid,
@@ -34,12 +37,10 @@ class _HomePageState extends State<HomePage> {
   void onTabTapped(int index) {
     setState(() {
      _currentIndex = index;
-     
     });
     _pageController.animateToPage(index,
       curve: Curves.easeIn,
       duration: Duration(milliseconds: 250));
-   
   }
 
 
@@ -67,19 +68,12 @@ class _HomePageState extends State<HomePage> {
     
   }
 
-
-
-  
-
-
   @override
   void dispose() {
     _pageController.dispose();
     //HiveService().closeBoxes();
     super.dispose();
   }
-
-
 
   Future _onWillPop () async{
     if(_currentIndex != 0){
@@ -89,9 +83,6 @@ class _HomePageState extends State<HomePage> {
       await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop', true);
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +101,7 @@ class _HomePageState extends State<HomePage> {
           allowImplicitScrolling: false,
           physics: NeverScrollableScrollPhysics(),  
           children: <Widget>[
+            Crime(),
             Explore(),
             VideoArticles(),
             Categories(),
@@ -134,22 +126,27 @@ class _HomePageState extends State<HomePage> {
       unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(iconList[0]),
-          label: 'home'.tr()
+            icon: Icon(iconList[0]),
+            label: 'crime'.tr()
 
         ),
         BottomNavigationBarItem(
           icon: Icon(iconList[1]),
+          label: 'news'.tr()
+
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(iconList[2]),
           label: 'videos'.tr()
 
         ),
         BottomNavigationBarItem(
-          icon: Icon(iconList[2], size: 25,),
+          icon: Icon(iconList[3], size: 25,),
           label: 'categories'.tr()
 
         ),
         BottomNavigationBarItem(
-          icon: Icon(iconList[3]),
+          icon: Icon(iconList[4]),
           label: 'profile'.tr()
 
         )

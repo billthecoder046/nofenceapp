@@ -57,10 +57,6 @@ class RecentBloc extends ChangeNotifier{
   }
 
 
-  
-
-
-
   setLoading(bool isloading) {
     _isLoading = isloading;
     notifyListeners();
@@ -78,30 +74,6 @@ class RecentBloc extends ChangeNotifier{
     notifyListeners();
   }
 
-  
-
-
-  // Future getData() async {
-  //   QuerySnapshot rawData;
-  //     rawData = await firestore
-  //         .collection('places')
-  //         .orderBy('timestamp', descending: true)
-  //         .limit(10)
-  //         .get();
-      
-  //     List<DocumentSnapshot> _snap = [];
-  //     _snap.addAll(rawData.docs);
-  //     _data = _snap.map((e) => Article.fromFirestore(e)).toList();
-  //     notifyListeners();
-    
-    
-  // }
-
-  // onRefresh(mounted) {
-  //   _data.clear();
-  //   getData();
-  //   notifyListeners();
-  // }
 
 
 

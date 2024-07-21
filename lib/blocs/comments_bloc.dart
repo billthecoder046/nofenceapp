@@ -38,14 +38,9 @@ class CommentsBloc extends ChangeNotifier{
         'timestamp': newTimestamp,
         'uid' : _uid
        }));
-    
-    
     notifyListeners();
 
   }
-
-
-
 
 
   Future deleteComment (String? timestamp, String? uid, String? timestamp2) async{
@@ -103,13 +98,11 @@ class CommentsBloc extends ChangeNotifier{
     });
   }
 
-
   Future reportComment (String? postDocumentName, String? uid, String? commnetTimestamp) async{
     final SharedPreferences sp = await SharedPreferences.getInstance();
     final String? _reporterUId = sp.getString('uid');
     final String _documentName = 'comments_report';
     final String _commentDocumentName = '$uid$commnetTimestamp';
-
 
     final CollectionReference ref = firestore.collection('user_reports').doc(_documentName).collection('reported_list');
     await _getDate().then((value)async{
@@ -122,7 +115,6 @@ class CommentsBloc extends ChangeNotifier{
       'timestamp' : newTimestamp
     });
     });
-    
   }
 
 

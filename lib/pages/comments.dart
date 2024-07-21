@@ -80,7 +80,7 @@ class _CommentsPageState extends State<CommentsPage> {
         setState(() {
           _isLoading = false;
           _snap.addAll(data.docs);
-          _data = _snap.map((e) => Comment.fromFirestore(e)).toList();
+          _data = _snap.map((e) => Comment.fromJSON(e as Map<String, dynamic>)).toList();
         });
       }
     } else {
@@ -141,7 +141,7 @@ class _CommentsPageState extends State<CommentsPage> {
                 onTap: () async {
                   await context
                       .read<CommentsBloc>()
-                      .addToFlagList(context, d.timestamp)
+                      .addToFlagList(context, d.timestamp.toString())
                       .then((value) => onRefreshData());
                   Navigator.pop(context);
                 },
@@ -153,7 +153,7 @@ class _CommentsPageState extends State<CommentsPage> {
                       onTap: () async {
                         await context
                             .read<CommentsBloc>()
-                            .removeFromFlagList(context, d.timestamp)
+                            .removeFromFlagList(context, d.timestamp.toString())
                             .then((value) => onRefreshData());
                         Navigator.pop(context);
                       },
@@ -166,7 +166,7 @@ class _CommentsPageState extends State<CommentsPage> {
                   handleReport(d);
                 },
               ),
-              sb.uid == d.uid
+              sb.uid == d.userId
                   ? ListTile(
                       title: Text('delete').tr(),
                       leading: Icon(Icons.delete),
@@ -183,7 +183,7 @@ class _CommentsPageState extends State<CommentsPage> {
   Future handleReport(Comment d) async {
     final SignInBloc sb = Provider.of<SignInBloc>(context, listen: false);
     if (sb.isSignedIn == true) {
-      await context.read<CommentsBloc>().reportComment(widget.timestamp, d.uid, d.timestamp);
+      await context.read<CommentsBloc>().reportComment(widget.timestamp, d.userId, d.timestamp.toString());
       Navigator.pop(context);
       openDialog(context, "report-info".tr(),"report-info1".tr());
     } else {
@@ -204,7 +204,7 @@ class _CommentsPageState extends State<CommentsPage> {
       }else{
         await context
           .read<CommentsBloc>()
-          .deleteComment(widget.timestamp, sb.uid, d.timestamp)
+          .deleteComment(widget.timestamp, sb.uid, d.timestamp.toString())
           .then((value) => openToast(context, 'Deleted Successfully!'));
         onRefreshData();
         Navigator.pop(context);
@@ -368,7 +368,7 @@ class _CommentsPageState extends State<CommentsPage> {
             child: CircleAvatar(
               radius: 25,
               backgroundColor: Colors.grey[300],
-              backgroundImage: CachedNetworkImageProvider(d.imageUrl!),
+              backgroundImage: CachedNetworkImageProvider(d.userProfileImageUrl!),
             ),
           ),
           Flexible(
@@ -386,7 +386,7 @@ class _CommentsPageState extends State<CommentsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        d.name!,
+                        d.userName!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -399,7 +399,7 @@ class _CommentsPageState extends State<CommentsPage> {
                               .contains(d.timestamp)
                           ? Text('comment flagged').tr()
                           : HtmlBodyWidget(
-                            content: d.comment!,
+                            content: d.commentText!,
                             isIframeVideoEnabled: false,
                             isVideoEnabled: false,
                             isimageEnabled: false,
@@ -411,7 +411,7 @@ class _CommentsPageState extends State<CommentsPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
                   child: Text(
-                    d.date!,
+                    d.commentText.toString(),
                     style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w300,
