@@ -11,7 +11,8 @@ import 'firebase_options.dart';
 
 
 void main()async {
-  print("This is AI Start APP");
+
+print("Lets now change it now in AI branch only");
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(
