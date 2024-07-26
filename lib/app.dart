@@ -1,9 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
+import 'package:nofence/blocs/all_crime_bloc/ciminal_bloc.dart';
+import 'package:nofence/blocs/all_crime_bloc/crime_feedback_bloc.dart';
+import 'package:nofence/blocs/all_crime_bloc/evidence_bloc.dart';
+import 'package:nofence/blocs/all_crime_bloc/location_bloc.dart';
+import 'package:nofence/blocs/justice_bloc.dart';
 import 'package:nofence/pages/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'blocs/ads_bloc.dart';
+import 'blocs/all_crime_bloc/crime_bloc.dart';
+import 'blocs/all_crime_bloc/judge_bloc.dart';
+import 'blocs/all_crime_bloc/witness_bloc.dart';
 import 'blocs/bookmark_bloc.dart';
 import 'blocs/categories_bloc.dart';
 import 'blocs/category_tab1_bloc.dart';
@@ -21,6 +31,7 @@ import 'blocs/sign_in_bloc.dart';
 import 'blocs/tab_index_bloc.dart';
 import 'blocs/theme_bloc.dart';
 import 'blocs/videos_bloc.dart';
+import 'config/firebase_config.dart';
 import 'models/theme_model.dart';
 
 
@@ -40,7 +51,16 @@ class MyApp extends StatelessWidget {
         builder: (_, mode, child){
           return MultiProvider(
       providers: [
+        Provider(create: (_) => GeoFirestore(FirebaseFirestore.instance.collection(FirebaseConfig.crimesCollection))),
         ChangeNotifierProvider<SignInBloc>(create: (context) => SignInBloc(),),
+        ChangeNotifierProvider<JusticeBloc>(create: (context) => JusticeBloc(),),
+        ChangeNotifierProvider<CrimeBloc>(create: (context) => CrimeBloc(),),
+        ChangeNotifierProvider<LocationBloc>(create: (context) => LocationBloc(),),
+        ChangeNotifierProvider<CriminalBloc>(create: (context) => CriminalBloc(),),
+        ChangeNotifierProvider<WitnessBloc>(create: (context) => WitnessBloc(),),
+        ChangeNotifierProvider<EvidenceBloc>(create: (context) => EvidenceBloc(),),
+        ChangeNotifierProvider<JudgeBloc>(create: (context) => JudgeBloc(),),
+        ChangeNotifierProvider<CrimeFeedbackBloc>(create: (context) => CrimeFeedbackBloc(),),
         ChangeNotifierProvider<CommentsBloc>(create: (context) => CommentsBloc(),),
         ChangeNotifierProvider<BookmarkBloc>(create: (context) => BookmarkBloc(),),
         ChangeNotifierProvider<SearchBloc>(create: (context) => SearchBloc()),

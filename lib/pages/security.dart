@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -79,7 +80,10 @@ class _SecurityPageState extends State<SecurityPage> {
           ),
 
           Align(
-            child: _isLoading == true ? CircularProgressIndicator() : Container(),
+            child: _isLoading == true ? SizedBox(
+                width: 32.0,
+                height: 32.0,
+                child: new CupertinoActivityIndicator()) : Container(),
           )
 
           

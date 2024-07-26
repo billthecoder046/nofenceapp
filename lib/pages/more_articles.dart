@@ -49,9 +49,6 @@ class _MoreArticlesState extends State<MoreArticles> {
     _getData();
   }
 
-
-
-
   onRefresh() {
     setState(() {
       _snap.clear();

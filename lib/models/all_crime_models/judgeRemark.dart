@@ -4,10 +4,9 @@ class Judge {
   String? name;
   String? court; // Optional: Court they belong to
   bool? isAssigned; // True if this judge is assigned to a case
-  int? likedConclusionCount; // Counter for conclusions liked by users
-  int? dislikedConclusionCount; // Counter for conclusions disliked by users
-  Map<String, int>? remarkLikes; // Map of remark IDs to like counts
-  Map<String, int>? remarkDislikes; // Map of remark IDs to dislike counts
+  int? loves; // Counter for conclusions liked by users
+  int? disloves; // Counter for conclusions disliked by users
+   // Map of remark IDs to dislike counts
   List<String>? assignedCrimeIds; // List of crime IDs assigned to this judge
   List<String>? decisionIds; // List of decision IDs made by this judge
 
@@ -16,10 +15,8 @@ class Judge {
     this.name,
     this.court,
     this.isAssigned = false, // Default is not assigned
-    this.likedConclusionCount = 0, // Initialize counters to 0
-    this.dislikedConclusionCount = 0,
-    this.remarkLikes = const {},
-    this.remarkDislikes = const {},
+    this.loves = 0, // Initialize counters to 0
+    this.disloves = 0,
     this.assignedCrimeIds = const [],
     this.decisionIds = const [],
   });
@@ -30,10 +27,8 @@ class Judge {
       'name': name,
       'court': court,
       'isAssigned': isAssigned,
-      'likedConclusionCount': likedConclusionCount,
-      'dislikedConclusionCount': dislikedConclusionCount,
-      'remarkLikes': remarkLikes,
-      'remarkDislikes': remarkDislikes,
+      'loves': loves,
+      'disloves': disloves,
       'assignedCrimeIds': assignedCrimeIds,
       'decisionIds': decisionIds,
     };
@@ -45,10 +40,8 @@ class Judge {
       name: json['name'],
       court: json['court'],
       isAssigned: json['isAssigned'],
-      likedConclusionCount: json['likedConclusionCount'],
-      dislikedConclusionCount: json['dislikedConclusionCount'],
-      remarkLikes: (json['remarkLikes'] as Map?)?.cast<String, int>(),
-      remarkDislikes: (json['remarkDislikes'] as Map?)?.cast<String, int>(),
+      loves: json['disloves'],
+      disloves: json['loves'],
       assignedCrimeIds: (json['assignedCrimeIds'] as List?)?.cast<String>(),
       decisionIds: (json['decisionIds'] as List?)?.cast<String>(),
     );
@@ -64,8 +57,8 @@ class JudgeDecision {
   DateTime? timestamp; // Timestamp when the decision was made
   List<String>? likedBy; // List of user IDs who liked the decision
   List<String>? dislikedBy; // List of user IDs who disliked the decision
-  int? likeCount; // Counter for likes
-  int? dislikeCount; // Counter for dislikes
+  int? loves; // Counter for likes
+  int? disloves; // Counter for dislikes
 
   JudgeDecision({
     this.id,
@@ -75,8 +68,8 @@ class JudgeDecision {
     this.timestamp,
     this.likedBy = const [],
     this.dislikedBy = const [],
-    this.likeCount = 0, // Initialize counters to 0
-    this.dislikeCount = 0,
+    this.loves = 0, // Initialize counters to 0
+    this.disloves = 0,
   });
 
   Map<String, dynamic> toJSON() {
@@ -88,8 +81,8 @@ class JudgeDecision {
       'timestamp': timestamp?.millisecondsSinceEpoch,
       'likedBy': likedBy,
       'dislikedBy': dislikedBy,
-      'likeCount': likeCount,
-      'dislikeCount': dislikeCount,
+      'loves': loves,
+      'disloves': disloves,
     };
   }
 
@@ -102,8 +95,8 @@ class JudgeDecision {
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp']),
       likedBy: (json['likedBy'] as List?)?.cast<String>(),
       dislikedBy: (json['dislikedBy'] as List?)?.cast<String>(),
-      likeCount: json['likeCount'],
-      dislikeCount: json['dislikeCount'],
+      loves: json['loves'],
+      disloves: json['disloves'],
     );
   }
 }

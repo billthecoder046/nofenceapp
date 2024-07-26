@@ -16,7 +16,7 @@ class Evidence {
   String? description; // Optional description of the evidence
   String? witnessId; // ID of the witness who provided this evidence
   String? testimony; // Witness's statement related to this evidence
-  List<Comment>? comments; // List of comments on this evidence
+  List<Comment>? comments;// List of comments on this evidence
 
   Evidence({
     this.id,

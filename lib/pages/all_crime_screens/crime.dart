@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
-import 'package:nofence/blocs/featured_bloc.dart';
-import 'package:nofence/blocs/popular_articles_bloc.dart';
-import 'package:nofence/blocs/recent_articles_bloc.dart';
+import 'package:nofence/blocs/all_crime_bloc/crime_bloc.dart';
+import 'package:nofence/blocs/justice_bloc.dart';
 import 'package:nofence/blocs/tab_index_bloc.dart';
 import 'package:nofence/config/config.dart';
 import 'package:nofence/pages/search.dart';
 import 'package:nofence/utils/app_name.dart';
 import 'package:nofence/utils/next_screen.dart';
 import 'package:nofence/widgets/drawer.dart';
-import 'package:nofence/widgets/tab_medium.dart';
+import 'package:nofence/widgets/tab_medium_crime.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import 'notifications.dart';
+import '../notifications.dart';
 
 class Crime extends StatefulWidget {
   Crime({Key? key}) : super(key: key);
@@ -29,25 +28,59 @@ class _CrimeState extends State<Crime>
   var scaffoldKey = GlobalKey<ScaffoldState>();
   TabController? _tabController;
 
+
   List<Tab> _tabs = [
     Tab(
       text: "crime".tr(),
     ),
     Tab(
-      text: Config().initialCategories2[0],
+      text: CrimeType.Murders.name,
     ),
     Tab(
-      text: Config().initialCategories2[1],
+          text: CrimeType.Theft.name,
     ),
     Tab(
-      text: Config().initialCategories2[2],
+      text: CrimeType.Robbery.name,
     ),
     Tab(
-      text: Config().initialCategories2[3],
+      text: CrimeType.Violence.name,
     ),
-    Tab(
-      text: Config().initialCategories2[4],
-    ),
+    // Tab(
+    //   text: CrimeType.Fraud.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.Destruction.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.Accident.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.FireRaising.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.Kidnapping.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.SexualAssault.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.DrugTrafficking.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.DomesticViolence.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.Harassment.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.cybercrime.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.moneyLaundering.name,
+    // ),
+    // Tab(
+    //   text: CrimeType.other.name,
+    // ),
   ];
 
   @override
@@ -58,9 +91,11 @@ class _CrimeState extends State<Crime>
       context.read<TabIndexBloc>().setTabIndex(_tabController!.index);
     });
     Future.delayed(Duration(milliseconds: 0)).then((value) {
-      context.read<FeaturedBloc>().getData();
-      context.read<PopularBloc>().getData();
-      context.read<RecentBloc>().getData(mounted);
+      context.read<CrimeBloc>().fetchAllCrimes();
+      // context.read<JusticeBloc>().fetchAllEvidence();
+      // context.read<JusticeBloc>().fetchAllJudgeDecisions();
+      // context.read<JusticeBloc>().fetchAllJudges();
+      // context.read<JusticeBloc>().fetchAllWitnesses();
     });
   }
 
@@ -142,7 +177,7 @@ class _CrimeState extends State<Crime>
       }, body: Builder(
         builder: (BuildContext context) {
           final innerScrollController = PrimaryScrollController.of(context);
-          return TabMedium(
+          return TabMediumCrime(
             sc: innerScrollController,
             tc: _tabController,
           );

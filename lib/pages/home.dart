@@ -11,7 +11,7 @@ import 'package:nofence/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import 'crime.dart';
+import 'all_crime_screens/crime.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);

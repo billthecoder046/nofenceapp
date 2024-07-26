@@ -35,6 +35,13 @@ void nextScreenPopup (context, page){
     builder: (context) => page),
   );
 }
+Future<String?> nextScreenCriminalDetails (context, page) async{
+  String? criminalId = await Navigator.push(context, MaterialPageRoute(
+
+      builder: (context) => page),
+  );
+  return criminalId;
+}
 
 void navigateToDetailsScreen (context, Article article, String? heroTag){
   if(article.contentType == 'video'){

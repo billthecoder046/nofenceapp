@@ -3,6 +3,7 @@ import 'package:nofence/blocs/sign_in_bloc.dart';
 import 'package:nofence/pages/done.dart';
 import 'package:nofence/pages/sign_in.dart';
 import 'package:nofence/services/app_service.dart';
+import 'package:nofence/utils/buttons.dart';
 import 'package:nofence/utils/icons.dart';
 import 'package:nofence/utils/next_screen.dart';
 import 'package:nofence/utils/snacbar.dart';
@@ -222,18 +223,15 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   height: 45,
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith((states) => Theme.of(context).primaryColor)
-                    ),
-                    child: signUpStarted == false 
+                  child: myFirstButton(text: signUpStarted == false
                       ? Text('sign up', style: TextStyle(fontSize: 16, color: Colors.white),).tr()
-                      : signUpCompleted == false 
+                      : signUpCompleted == false
                       ? CircularProgressIndicator(backgroundColor: Colors.white)
-                      : Text('sign up successful!', style: TextStyle(fontSize: 16, color: Colors.white)).tr(),
-                    onPressed: (){
-                     handleSignUpwithEmailPassword();
-                  }),
+                      : Text('sign up successful!', style: TextStyle(fontSize: 16, color: Colors.white)).tr(),onPressed: (){
+                    handleSignUpwithEmailPassword();
+                  })
+
+
                 ),
                 SizedBox(height: 10,),
                 Row(

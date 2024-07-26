@@ -1,84 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/crime.dart';
-import 'package:nofence/models/evidence.dart';
-import 'package:nofence/models/witness.dart';
+import 'package:nofence/models/all_crime_models/crime.dart';
+import 'package:nofence/models/all_crime_models/evidence.dart';
+import 'package:nofence/models/all_crime_models/witness.dart';
 import 'package:nofence/models/comment.dart';
 
-import '../models/judgeRemark.dart';
+import '../models/all_crime_models/judgeRemark.dart';
 
-class AppBloc extends ChangeNotifier {
+class JusticeBloc extends ChangeNotifier {
   // State variables to hold data
-  Crime? currentCrime;
-  List<Crime> crimes = [];
+
   List<Judge> judges = [];
   List<Witness> witnesses = [];
   List<Evidence> evidence = [];
   List<JudgeDecision> judgeDecisions = [];
 
-  // --- Crime Operations ---
+  // Pagination variables for each data type
+  QueryDocumentSnapshot? _lastCrimeVisible;
+  QueryDocumentSnapshot? _lastJudgeVisible;
+  QueryDocumentSnapshot? _lastWitnessVisible;
+  QueryDocumentSnapshot? _lastEvidenceVisible;
+  QueryDocumentSnapshot? _lastJudgeDecisionVisible;
 
-  Future<void> createCrime(Crime newCrime) async {
-    try {
-      final docRef = FirebaseFirestore.instance.collection('crimes').doc();
-      newCrime.id = docRef.id;
-      await docRef.set(newCrime.toJSON());
-      crimes.add(newCrime);
-      notifyListeners();
-    } catch (e) {
-      print('Error creating crime: $e');
-    }
+  bool _isLoadingJudges = true;
+  bool _isLoadingWitnesses = true;
+  bool _isLoadingEvidence = true;
+  bool _isLoadingJudgeDecisions = true;
+
+  bool get isLoadingJudges => _isLoadingJudges;
+  bool get isLoadingWitnesses => _isLoadingWitnesses;
+  bool get isLoadingEvidence => _isLoadingEvidence;
+  bool get isLoadingJudgeDecisions => _isLoadingJudgeDecisions;
+
+
+
+  Future<void> refreshJudges(BuildContext context) async {
+    _isLoadingJudges = true;
+    await fetchAllJudges(refresh: true);
+    notifyListeners();
   }
 
-  Future<void> getCrime(String crimeId) async {
-    try {
-      final docRef = FirebaseFirestore.instance.collection('crimes').doc(crimeId);
-      final docSnapshot = await docRef.get();
-      if (docSnapshot.exists) {
-        currentCrime = Crime.fromJSON(docSnapshot.data()!);
-        notifyListeners();
-      }
-    } catch (e) {
-      print('Error getting crime: $e');
-    }
+  Future<void> refreshWitnesses(BuildContext context) async {
+    _isLoadingWitnesses = true;
+    await fetchAllWitnesses(refresh: true);
+    notifyListeners();
   }
 
-  Future<void> updateCrime(Crime updatedCrime) async {
-    try {
-      final docRef = FirebaseFirestore.instance.collection('crimes').doc(updatedCrime.id);
-      await docRef.update(updatedCrime.toJSON());
-      // Update the crime in the list if it exists
-      final index = crimes.indexWhere((crime) => crime.id == updatedCrime.id);
-      if (index != -1) {
-        crimes[index] = updatedCrime;
-      }
-      notifyListeners();
-    } catch (e) {
-      print('Error updating crime: $e');
-    }
+  Future<void> refreshEvidence(BuildContext context) async {
+    _isLoadingEvidence = true;
+    await fetchAllEvidence(refresh: true);
+    notifyListeners();
   }
 
-  Future<void> deleteCrime(String crimeId) async {
-    try {
-      final docRef = FirebaseFirestore.instance.collection('crimes').doc(crimeId);
-      await docRef.delete();
-      // Remove the crime from the list
-      crimes.removeWhere((crime) => crime.id == crimeId);
-      notifyListeners();
-    } catch (e) {
-      print('Error deleting crime: $e');
-    }
+  Future<void> refreshJudgeDecisions(BuildContext context) async {
+    _isLoadingJudgeDecisions = true;
+    await fetchAllJudgeDecisions(refresh: true);
+    notifyListeners();
   }
 
-  Future<void> fetchAllCrimes() async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('crimes').get();
-      crimes = querySnapshot.docs.map((doc) => Crime.fromJSON(doc.data())).toList();
-      notifyListeners();
-    } catch (e) {
-      print('Error fetching crimes: $e');
-    }
-  }
 
   // --- Judge Operations ---
 
@@ -134,11 +113,40 @@ class AppBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllJudges() async {
+  Future<void> fetchAllJudges({bool refresh = false}) async {
     try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('judges').get();
-      judges = querySnapshot.docs.map((doc) => Judge.fromJSON(doc.data())).toList();
-      notifyListeners();
+      // Clear existing data if refreshing
+      if (refresh) {
+        judges.clear();
+        _lastJudgeVisible = null;
+      }
+
+      QuerySnapshot rawData;
+      if (_lastJudgeVisible == null) {
+        rawData = await FirebaseFirestore.instance
+            .collection('judges')
+            .orderBy('name', descending: false) // Order by name for example
+            .limit(4)
+            .get();
+      } else {
+        rawData = await FirebaseFirestore.instance
+            .collection('judges')
+            .orderBy('name', descending: false)
+            .startAfter([_lastJudgeVisible!['name']])
+            .limit(4)
+            .get();
+      }
+
+      if (rawData.docs.length > 0) {
+        _lastJudgeVisible = rawData.docs[rawData.docs.length - 1];
+        judges.addAll(rawData.docs.map((doc) => Judge.fromJSON(doc.data() as Map<String, dynamic>)).toList());
+        _isLoadingJudges = false;
+        notifyListeners();
+      } else {
+        _isLoadingJudges = false;
+        print('No more judges available');
+        notifyListeners();
+      }
     } catch (e) {
       print('Error fetching judges: $e');
     }
@@ -198,11 +206,41 @@ class AppBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllWitnesses() async {
+  Future<void> fetchAllWitnesses({bool refresh = false}) async {
     try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('witnesses').get();
-      witnesses = querySnapshot.docs.map((doc) => Witness.fromJSON(doc.data())).toList();
-      notifyListeners();
+      // Clear existing data if refreshing
+      if (refresh) {
+        witnesses.clear();
+        _lastWitnessVisible = null;
+      }
+
+      QuerySnapshot rawData;
+      if (_lastWitnessVisible == null) {
+        rawData = await FirebaseFirestore.instance
+            .collection('witnesses')
+            .orderBy('name', descending: false) // Order by name for example
+            .limit(4)
+            .get();
+      } else {
+        rawData = await FirebaseFirestore.instance
+            .collection('witnesses')
+            .orderBy('name', descending: false)
+            .startAfter([_lastWitnessVisible!['name']])
+            .limit(4)
+            .get();
+      }
+
+      if (rawData.docs.length > 0) {
+        _lastWitnessVisible = rawData.docs[rawData.docs.length - 1];
+        witnesses.addAll(
+            rawData.docs.map((doc) => Witness.fromJSON(doc.data() as Map<String, dynamic>)).toList());
+        _isLoadingWitnesses = false;
+        notifyListeners();
+      } else {
+        _isLoadingWitnesses = false;
+        print('No more witnesses available');
+        notifyListeners();
+      }
     } catch (e) {
       print('Error fetching witnesses: $e');
     }
@@ -262,11 +300,41 @@ class AppBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllEvidence() async {
+  Future<void> fetchAllEvidence({bool refresh = false}) async {
     try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('evidence').get();
-      evidence = querySnapshot.docs.map((doc) => Evidence.fromJSON(doc.data())).toList();
-      notifyListeners();
+      // Clear existing data if refreshing
+      if (refresh) {
+        evidence.clear();
+        _lastEvidenceVisible = null;
+      }
+
+      QuerySnapshot rawData;
+      if (_lastEvidenceVisible == null) {
+        rawData = await FirebaseFirestore.instance
+            .collection('evidence')
+            .orderBy('timestamp', descending: true) // Order by timestamp for example
+            .limit(4)
+            .get();
+      } else {
+        rawData = await FirebaseFirestore.instance
+            .collection('evidence')
+            .orderBy('timestamp', descending: true)
+            .startAfter([_lastEvidenceVisible!['timestamp']])
+            .limit(4)
+            .get();
+      }
+
+      if (rawData.docs.length > 0) {
+        _lastEvidenceVisible = rawData.docs[rawData.docs.length - 1];
+        evidence.addAll(
+            rawData.docs.map((doc) => Evidence.fromJSON(doc.data() as Map<String, dynamic>)).toList());
+        _isLoadingEvidence = false;
+        notifyListeners();
+      } else {
+        _isLoadingEvidence = false;
+        print('No more evidence available');
+        notifyListeners();
+      }
     } catch (e) {
       print('Error fetching evidence: $e');
     }
@@ -326,11 +394,41 @@ class AppBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllJudgeDecisions() async {
+  Future<void> fetchAllJudgeDecisions({bool refresh = false}) async {
     try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('judgeDecisions').get();
-      judgeDecisions = querySnapshot.docs.map((doc) => JudgeDecision.fromJSON(doc.data())).toList();
-      notifyListeners();
+      // Clear existing data if refreshing
+      if (refresh) {
+        judgeDecisions.clear();
+        _lastJudgeDecisionVisible = null;
+      }
+
+      QuerySnapshot rawData;
+      if (_lastJudgeDecisionVisible == null) {
+        rawData = await FirebaseFirestore.instance
+            .collection('judgeDecisions')
+            .orderBy('timestamp', descending: true) // Order by timestamp for example
+            .limit(4)
+            .get();
+      } else {
+        rawData = await FirebaseFirestore.instance
+            .collection('judgeDecisions')
+            .orderBy('timestamp', descending: true)
+            .startAfter([_lastJudgeDecisionVisible!['timestamp']])
+            .limit(4)
+            .get();
+      }
+
+      if (rawData.docs.length > 0) {
+        _lastJudgeDecisionVisible = rawData.docs[rawData.docs.length - 1];
+        judgeDecisions.addAll(
+            rawData.docs.map((doc) => JudgeDecision.fromJSON(doc.data() as Map<String, dynamic>)).toList());
+        _isLoadingJudgeDecisions = false;
+        notifyListeners();
+      } else {
+        _isLoadingJudgeDecisions = false;
+        print('No more judge decisions available');
+        notifyListeners();
+      }
     } catch (e) {
       print('Error fetching judge decisions: $e');
     }
@@ -362,44 +460,42 @@ class AppBloc extends ChangeNotifier {
 
   // --- Feedback Operations ---
 
-  Future<void> updateCrimeFeedback(String crimeId, String userId, String action, bool isLike) async {
-    try {
-      final docRef = FirebaseFirestore.instance.collection('crimes').doc(crimeId);
-      final docSnapshot = await docRef.get();
-      if (docSnapshot.exists) {
-        final crime = Crime.fromJSON(docSnapshot.data()!);
-        if (crime.feedback != null) {
-          if (action == 'judgeConclusion') {
-            if (isLike) {
-              crime.feedback!.judgeLikedConclusion!.add(userId);
-              crime.feedback!.judgeLikedConclusionCount = crime.feedback!.judgeLikedConclusion!.length;
-            } else {
-              crime.feedback!.judgeDislikedConclusion!.add(userId);
-              crime.feedback!.judgeDislikedConclusionCount = crime.feedback!.judgeDislikedConclusion!.length;
-            }
-          } else if (action == 'aiConclusion') {
-            if (isLike) {
-              crime.feedback!.aiLikedConclusion!.add(userId);
-              crime.feedback!.aiLikedConclusionCount = crime.feedback!.aiLikedConclusion!.length;
-            } else {
-              crime.feedback!.aiDislikedConclusion!.add(userId);
-              crime.feedback!.aiDislikedConclusionCount = crime.feedback!.aiDislikedConclusion!.length;
-            }
-          }
-          await docRef.update(crime.toJSON());
-        }
-        notifyListeners();
-      }
-    } catch (e) {
-      print('Error updating crime feedback: $e');
-    }
-  }
+  // Future<void> updateCrimeFeedback(String crimeId, String userId, String action, bool isLike) async {
+  //   try {
+  //     final docRef = FirebaseFirestore.instance.collection('crimes').doc(crimeId);
+  //     final docSnapshot = await docRef.get();
+  //     if (docSnapshot.exists) {
+  //       final crime = Crime.fromJSON(docSnapshot.data()!);
+  //       if (crime.feedback != null) {
+  //         if (action == 'judgeConclusion') {
+  //           if (isLike) {
+  //             crime.feedback!.judgeLikedConclusion!.add(userId);
+  //             crime.feedback!.judgeLikedConclusionCount = crime.feedback!.judgeLikedConclusion!.length;
+  //           } else {
+  //             crime.feedback!.judgeDislikedConclusion!.add(userId);
+  //             crime.feedback!.judgeDislikedConclusionCount = crime.feedback!.judgeDislikedConclusion!.length;
+  //           }
+  //         } else if (action == 'aiConclusion') {
+  //           if (isLike) {
+  //             crime.feedback!.aiLikedConclusion!.add(userId);
+  //             crime.feedback!.aiLikedConclusionCount = crime.feedback!.aiLikedConclusion!.length;
+  //           } else {
+  //             crime.feedback!.aiDislikedConclusion!.add(userId);
+  //             crime.feedback!.aiDislikedConclusionCount = crime.feedback!.aiDislikedConclusion!.length;
+  //           }
+  //         }
+  //         await docRef.update(crime.toJSON());
+  //       }
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     print('Error updating crime feedback: $e');
+  //   }
+  // }
 
 // --- Additional Functions (As needed) ---
 
-// ... (For example, functions to get data based on specific criteria)
+  //Criminal functions
 
-// --- Helper Functions (As needed) ---
-// ...
 
 }

@@ -42,33 +42,25 @@ class Config{
     'Politics',
     'Travel'
   ];
-  final List initialCategories2 = [
-    'Murders',
-    'Theft',
-    'Accusations',
-    'Divorces',
-    'Property Issues'
-  ];
+
+
 }
 enum CrimeType {
-  murder,
-  theft,
-  assault,
-  robbery,
-  vandalism,
-  fraud,
-  burglary,
-  arson,
-  kidnapping,
-  sexualAssault,
-  drugTrafficking,
-  domesticViolence,
-  harassment,
-  stalking,
-  identityTheft,
+  Murders,
+  Theft,
+  Robbery,
+  Violence,
+  Fraud,
+  Destruction,
+  Accident,
+  FireRaising,
+  Kidnapping,
+  SexualAssault,
+  DrugTrafficking,
+  DomesticViolence,
+  Harassment,
   cybercrime,
-  extortion,
-  embezzlement,
   moneyLaundering,
+  unknown,
   other,
 }

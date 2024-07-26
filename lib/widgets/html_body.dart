@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:nofence/blocs/theme_bloc.dart';
@@ -87,7 +88,10 @@ class HtmlBodyWidget extends StatelessWidget {
                   onTap: () => nextScreen(context, FullScreenImage(imageUrl: imageUrl)),
                   child: CachedNetworkImage(
                     imageUrl: imageUrl,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    placeholder: (context, url) => const SizedBox(
+                        width: 32.0,
+                        height: 32.0,
+                        child:   CupertinoActivityIndicator()),
                   ));
             }),
       ],

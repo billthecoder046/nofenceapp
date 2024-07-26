@@ -1,12 +1,14 @@
+import '../../pages/all_crime_screens/crime.dart';
+
 enum WitnessType {
-  anonymous, // Anonymous witness
-  identified, // Identified witness
+  yes, // Anonymous witness
+  no, // Identified witness
 }
 
 class Witness {
   String? id; // Unique ID for the witness
-  String? crimeId; // ID of the crime this witness is associated with
-  WitnessType? witnessType; // Type of witness (anonymous or identified)
+  List<String>? crimeId; // ID of the crime this witness is associated with
+ // Type of witness (anonymous or identified)
   String? name; // Name of the witness (can be anonymous)
   String? cnic; // CNIC number
   String? mobileNumber; // Mobile number
@@ -20,7 +22,6 @@ class Witness {
   Witness({
     this.id,
     this.crimeId,
-    this.witnessType,
     this.name,
     this.cnic,
     this.mobileNumber,
@@ -35,8 +36,7 @@ class Witness {
   Map<String, dynamic> toJSON() {
     return {
       'id': id,
-      'crimeId': crimeId,
-      'witnessType': witnessType?.name, // Store enum as string
+      'crimeId': crimeId,  // Store enum as string
       'name': name,
       'cnic': cnic,
       'mobileNumber': mobileNumber,
@@ -52,8 +52,7 @@ class Witness {
   factory Witness.fromJSON(Map<String, dynamic> json) {
     return Witness(
       id: json['id'],
-      crimeId: json['crimeId'],
-      witnessType: WitnessType.values.byName(json['witnessType']), // Retrieve enum from string
+      crimeId: (json['crimeId'] as List?)?.cast<String>(), // Retrieve enum from string
       name: json['name'],
       cnic: json['cnic'],
       mobileNumber: json['mobileNumber'],

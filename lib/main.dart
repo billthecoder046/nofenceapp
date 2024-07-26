@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'app.dart';
@@ -15,6 +16,7 @@ void main()async {
 print("Lets now change it now in AI branch only");
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+Gemini.init(apiKey: 'AIzaSyCFIj4Y3OyCXsWh-UoBz1jB_IuaKbawUiI');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

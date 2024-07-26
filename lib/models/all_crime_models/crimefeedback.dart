@@ -1,6 +1,7 @@
 
 
 class CrimeFeedback {
+  String? id;
   String? crimeId;
   List<String>? judgeLikedConclusion; // Judge IDs who liked conclusion
   int? judgeLikedConclusionCount; // Counter for judges who liked conclusion
@@ -13,6 +14,7 @@ class CrimeFeedback {
 
   // Constructor
   CrimeFeedback({
+    this.id,
     this.crimeId,
     this.judgeLikedConclusion = const [],
     this.judgeLikedConclusionCount = 0,
@@ -27,6 +29,7 @@ class CrimeFeedback {
   // Function to convert CrimeFeedback object to JSON
   Map<String, dynamic> toJSON() {
     return {
+      'id':id,
       'crimeId': crimeId,
       'judgeLikedConclusion': judgeLikedConclusion,
       'judgeLikedConclusionCount': judgeLikedConclusionCount,
@@ -42,6 +45,7 @@ class CrimeFeedback {
   // Function to create a CrimeFeedback object from JSON
   factory CrimeFeedback.fromJSON(Map<String, dynamic> json) {
     return CrimeFeedback(
+      id: json['id'],
       crimeId: json['crimeId'],
       judgeLikedConclusion: (json['judgeLikedConclusion'] as List?)?.cast<String>(),
       judgeLikedConclusionCount: json['judgeLikedConclusionCount'],

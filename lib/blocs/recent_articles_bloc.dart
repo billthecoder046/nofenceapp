@@ -56,15 +56,10 @@ class RecentBloc extends ChangeNotifier{
     return null;
   }
 
-
   setLoading(bool isloading) {
     _isLoading = isloading;
     notifyListeners();
   }
-
-
-
-
   onRefresh(mounted) {
     _isLoading = true;
     _snap.clear();
@@ -73,10 +68,5 @@ class RecentBloc extends ChangeNotifier{
     getData(mounted);
     notifyListeners();
   }
-
-
-
-
-
 
 }
