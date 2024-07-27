@@ -3,11 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:nofence/blocs/sign_up/user_logic.dart';
+import 'package:nofence/pages/sign_up2.dart';
+import 'package:nofence/utils/next_screen.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
+
+import '../models/userModel.dart';
 
 class SignInBloc extends ChangeNotifier {
 
@@ -205,18 +212,24 @@ class SignInBloc extends ChangeNotifier {
   }
 
 
-  Future signUpwithEmailPassword (userName,userEmail, userPassword) async{
+  Future signUpwithEmailPassword (context, userName,userEmail, userPassword) async{
     try{
       final User? user = (await _firebaseAuth.createUserWithEmailAndPassword(email: userEmail,password: userPassword,)).user!;
       assert(user != null);  
       await user!.getIdToken();
+      var userController = Get.put(UserLogic());
+
       this._name = userName;
+      userController.currentUser.value!.name = userName;
       this._uid = user.uid;
       this._imageUrl = defaultUserImageUrl;
+      userController.currentUser.value!.profilePicUrl = defaultUserImageUrl;
       this._email = user.email;
+      userController.currentUser.value!.email = user.email;
       this._signInProvider = 'email';
 
       _hasError = false;
+      nextScreenCriminalDetails(context, SignUpPage2());
       notifyListeners();
     }catch(e){
       _hasError = true;
@@ -224,6 +237,18 @@ class SignInBloc extends ChangeNotifier {
       notifyListeners();
     }
     
+  }
+  Future saveCompleteDetailsToFirebase (MyUser myUser) async{
+    try{
+
+      print("So my current details are: ${myUser.toJSON()}");
+      notifyListeners();
+    }catch(e){
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+
   }
 
 
@@ -235,8 +260,9 @@ class SignInBloc extends ChangeNotifier {
         await user!.getIdToken();    
         final User currentUser = _firebaseAuth.currentUser!;    
         this._uid = currentUser.uid;
+        var controller = Get.put(UserLogic());
+        controller.currentUser.value!.uid = currentUser.uid;
         this._signInProvider = 'email';
-
       _hasError = false;
       notifyListeners();
     }catch(e){

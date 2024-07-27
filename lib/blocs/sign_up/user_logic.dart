@@ -10,7 +10,7 @@ import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../../models/userModel.dart';
 
-class SignUPLogic extends GetxController {
+class UserLogic extends GetxController {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String defaultUserImageUrl =

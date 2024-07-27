@@ -30,20 +30,11 @@ class _SignUpPageState extends State<SignUpPage> {
   var nameCtrl = TextEditingController();
   var formKey = GlobalKey<FormState>();
   
-
-
-
-  
   late String email;
   late String pass;
   String? name;
   bool signUpStarted = false;
   bool signUpCompleted = false;
-  
-
-
-  
-  
 
   void lockPressed (){
     if(offsecureText == true){
@@ -76,15 +67,33 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             signUpStarted = true;
           });
-          sb.signUpwithEmailPassword(name, email, pass).then((_)async{
+          sb.signUpwithEmailPassword(context, name, email, pass);
+        }
+      });
+    }
+  }
+  Future handleSignUpSecondScreen () async{
+    final SignInBloc sb = Provider.of<SignInBloc>(context, listen: false );
+    if (formKey.currentState!.validate()){
+      formKey.currentState!.save();
+      FocusScope.of(context).requestFocus(new FocusNode());
+      await AppService().checkInternet().then((hasInternet){
+        if(hasInternet == false){
+          openSnacbar(context, 'no internet'.tr());
+        }
+        else{
+          setState(() {
+            signUpStarted = true;
+          });
+          sb.signUpwithEmailPassword(context,name, email, pass).then((_)async{
             if(sb.hasError == false){
               sb.getTimestamp()
-              .then((value) => sb.saveToFirebase()
-              .then((value) => sb.increaseUserCount())
-              .then((value) => sb.guestSignout()
-              .then((value) => sb.saveDataToSP()
-              .then((value) => sb.setSignIn()
-              .then((value){
+                  .then((value) => sb.saveToFirebase()
+                  .then((value) => sb.increaseUserCount())
+                  .then((value) => sb.guestSignout()
+                  .then((value) => sb.saveDataToSP()
+                  .then((value) => sb.setSignIn()
+                  .then((value){
                 setState(() {
                   signUpCompleted = true;
                 });
@@ -96,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
               });
               openSnacbar(context, sb.errorCode);
             }
-          });  
+          });
         }
       });
     }
