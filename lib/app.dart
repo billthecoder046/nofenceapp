@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:nofence/blocs/all_crime_bloc/ciminal_bloc.dart';
 import 'package:nofence/blocs/all_crime_bloc/crime_feedback_bloc.dart';
 import 'package:nofence/blocs/all_crime_bloc/evidence_bloc.dart';
@@ -79,7 +80,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<CategoryTab4Bloc>(create: (context) => CategoryTab4Bloc()),
 
       ],
-      child: MaterialApp(
+      child: GetMaterialApp(
           supportedLocales: context.supportedLocales,
           localizationsDelegates: context.localizationDelegates,
           locale: context.locale,

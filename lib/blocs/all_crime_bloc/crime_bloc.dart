@@ -103,7 +103,7 @@ class CrimeBloc extends ChangeNotifier {
       if (_lastCrimeVisible == null) {
         rawData = await FirebaseFirestore.instance
             .collection(FirebaseConfig.crimesCollection)
-            .orderBy('date', descending: true)
+            .orderBy('date', descending: false)
             .limit(4)
             .get();
       } else {

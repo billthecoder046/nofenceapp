@@ -11,7 +11,8 @@ class Crime {
   // Removed 'crimeType'
   // No need for 'latitude' and 'longitude' directly
   Map<String, dynamic>? location = {}; // Location data for GeoFirestore (g: geohash, l: [latitude, longitude])
-  DateTime? date; // Date and time of the crime
+  DateTime? postDate; // Date and time of the crime
+  DateTime? crimeDate; // Date and time of the crime
   String? userDescription; // Detailed description of the crime provided by the user
   String? userTitle; // Detailed description of the crime provided by the user
   List<String>? witnesses = []; // List of witnes ses associated with the crime
@@ -29,7 +30,8 @@ class Crime {
     this.id,
     this.crimeCategory,
     this.location, // Add the location field
-    this.date,
+    this.postDate,
+    this.crimeDate,
     this.userDescription,
     this.userTitle,
     this.witnesses,
@@ -51,7 +53,8 @@ class Crime {
       // Removed 'crimeType'
       // No need to include 'latitude' and 'longitude' individually
       'location': location, // Include the location field for GeoFirestore
-      'date': date?.millisecondsSinceEpoch, // Store date as timestamp
+      'postDate': postDate?.millisecondsSinceEpoch, // Store postDate as timestamp
+      'crimeDate': crimeDate?.millisecondsSinceEpoch, // Store crimeDate as timestamp
       'description': userDescription,
       'userTitle': userTitle,
       'witnesses': witnesses,
@@ -74,7 +77,8 @@ class Crime {
       // Removed 'crimeType'
       // Retrieve the location field for GeoFirestore
       location: json['location'],
-      date: json['date'] != null ? DateTime.fromMillisecondsSinceEpoch(json['date']) : null,
+      postDate: json['postDate'] != null ? DateTime.fromMillisecondsSinceEpoch(json['postDate']) : null,
+      crimeDate: json['crimeDate'] != null ? DateTime.fromMillisecondsSinceEpoch(json['crimeDate']) : null,
       userDescription: json['description'],
       userTitle: json['userTitle'],
       witnesses: (json['witnesses'] as List?)?.cast<String>(),

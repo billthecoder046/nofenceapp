@@ -5,7 +5,7 @@ enum EvidenceType {
   video, // Video recording
   audio, // Audio recording
   document, // Document (PDF, Word, etc.)
-  other, // Other type of evidence
+  other, unknown, // Other type of evidence
 }
 
 class Evidence {
@@ -43,17 +43,18 @@ class Evidence {
   }
 
   factory Evidence.fromJSON(Map<String, dynamic> json) {
+    print(json);
     return Evidence(
-      id: json['id'],
-      crimeId: json['crimeId'],
-      evidenceType: EvidenceType.values.byName(json['evidenceType']), // Retrieve enum from string
-      urls: (json['urls'] as List?)?.cast<String>(),
-      description: json['description'],
-      witnessId: json['witnessId'],
-      testimony: json['testimony'],
+      id: json['id']??'',
+      crimeId: json['crimeId']??'',
+      evidenceType: EvidenceType.values.byName(json['evidenceType']??'unknown'), // Retrieve enum from string
+      urls: (json['urls'] as List?)?.cast<String>()??[],
+      description: json['description']??'',
+      witnessId: json['witnessId']??'',
+      testimony: json['testimony']??'',
       comments: (json['comments'] as List?)
           ?.map((c) => Comment.fromJSON(c))
-          .toList(),
+          .toList()??[],
     );
   }
 }

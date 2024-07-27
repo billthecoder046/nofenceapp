@@ -12,11 +12,6 @@ import 'package:nofence/widgets/privacy_info.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-
-
-
-
-
 class SignInPage extends StatefulWidget {
   final String? tag;
   SignInPage({Key? key, this.tag}) : super(key: key);

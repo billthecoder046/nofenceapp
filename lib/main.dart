@@ -16,7 +16,7 @@ void main()async {
 print("Lets now change it now in AI branch only");
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-Gemini.init(apiKey: 'AIzaSyCFIj4Y3OyCXsWh-UoBz1jB_IuaKbawUiI');
+  Gemini.init(apiKey: 'AIzaSyCFIj4Y3OyCXsWh-UoBz1jB_IuaKbawUiI');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

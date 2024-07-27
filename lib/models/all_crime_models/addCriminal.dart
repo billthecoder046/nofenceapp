@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -104,7 +105,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
       final List<XFile>? pickedMedia = await _picker.pickMultiImage(imageQuality: 50);
       if (pickedMedia != null && pickedMedia.isNotEmpty) {
         setState(() {
-          _selectedCMedia = pickedMedia;
+          _selectedCMedia.addAll(pickedMedia) ;
         });
       }
     } catch (e) {
@@ -116,6 +117,19 @@ class _CriminalDetailsState extends State<CriminalDetails> {
   final TextEditingController nicController = TextEditingController();
   final TextEditingController aliasController = TextEditingController();
 
+  Future<void> _selectMediaFromCamera() async {
+    try {
+      // Use pickMultiImage() for both images and videos
+      final XFile? pickedMedia = await _picker.pickImage(imageQuality: 50, source: ImageSource.camera);
+      if (pickedMedia != null) {
+        setState(() {
+          _selectedCMedia.add(pickedMedia);
+        });
+      }
+    } catch (e) {
+      print('Error picking media: $e');
+    }
+  }
   // Function to upload media to Firebase Storage
 
   @override
@@ -297,25 +311,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            isLoading
-                                ? SizedBox(
-                                width: 32.0,
-                                height: 32.0,
-                                child: new CupertinoActivityIndicator())
-                                : myFirstButton(
-                              text: Text(
-                                  "${_selectedCMedia.isNotEmpty ? 'Images Selected' : 'Select Images'}"),
-                              onPressed: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-
-                                await _selectCMedia();
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              },
-                            ),
+                            selectMedia(context),
                             SizedBox(height: 10),
                             if (_selectedCMedia.isNotEmpty)
                               SizedBox(
@@ -324,21 +320,41 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                                   scrollDirection: Axis.horizontal,
                                   children: [
                                     for (var mediaFile in _selectedCMedia)
-                                      Container(
-                                        padding: EdgeInsets.only(right: 10),
-                                        height: 150,
-                                        width: 150,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: Image.file(
-                                            File(mediaFile.path),
-                                            fit: BoxFit.cover,
+                                      Stack(
+                                        alignment: Alignment.bottomLeft,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.only(right: 10),
+                                            height: 150,
+                                            width: 150,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(10),
+                                              child: Image.file(
+                                                File(mediaFile.path),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          Container(
+
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius: BorderRadius.circular(10)
+                                            ),
+                                            child: IconButton(onPressed: (){
+                                              setState(() {
+                                                _selectedCMedia.remove(mediaFile);
+                                              });
+                                            }, icon: Icon(Icons.delete_forever,color: Colors.white,size: 20,)),
+                                          )
+                                        ],
                                       ),
                                   ],
                                 ),
-                              )
+                              ),
+                            savingButtons(context)
                           ],
                         ),
                       ),
@@ -347,39 +363,112 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                     ],
                   ),
                 ),
-                SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    myFirstButton(
-                      onPressed: () => _formKeyCriminal.currentState!.reset(),
-                      text: Text('Clear'),
-                    ),
-                    myFirstButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      text: Text('Cancel'),
-                    ),
-                    myFirstButton(
-                      onPressed: () async {
-                        setState(() {
-                          isSavingCriminal = true;
-                        });
-                        if (_formKeyCriminal.currentState!.validate()) {
-                          _formKeyCriminal.currentState!.save();
-                          await _saveCriminal();
-                        }
-                        setState(() {
-                          isSavingCriminal = false;
-                        });
-                      },
-                      text: Text('Save'),
-                    ),
-                  ],
-                )
+
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  savingButtons(context){
+    return Column(
+      children: [
+        SizedBox(height: 40),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            myFirstButton(
+              onPressed: () => _formKeyCriminal.currentState!.reset(),
+              text: Text('Clear'),
+            ),
+            myFirstButton(
+              onPressed: () => Navigator.of(context).pop(),
+              text: Text('Cancel'),
+            ),
+            myFirstButton(
+              onPressed: () async {
+                setState(() {
+                  isSavingCriminal = true;
+                });
+                if (_formKeyCriminal.currentState!.validate()) {
+                  _formKeyCriminal.currentState!.save();
+                  await _saveCriminal();
+                }
+                setState(() {
+                  isSavingCriminal = false;
+                });
+              },
+              text: Text('Save'),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+  selectMedia(context){
+    return  Container(
+      padding: EdgeInsets.only(left: 12,right: 12),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("${_selectedCMedia.isNotEmpty ? 'Images Selected'.tr() : 'Select Evidence Images (Optional)'.tr()}"),
+              _selectedCMedia.isNotEmpty?TextButton(child:Text('Delete All' ,style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),), onPressed: (){
+                setState(() {
+                  _selectedCMedia.clear();
+                });
+              }, ):Container()
+            ],
+          ),
+          isLoading
+              ? SizedBox(
+              width: 32.0,
+              height: 32.0,
+              child: new CupertinoActivityIndicator())
+              : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              myFirstButton(
+                text: Row(
+                    children: [
+                      Icon(Icons.folder,size: 18,color: Colors.white,),Gap(10),
+                      Text('Gallery')
+                    ]),
+
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+
+                  await _selectCMedia();
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
+              ),
+              myFirstButton(
+                text:  Row(
+                    children: [
+                      Icon(Icons.camera,size: 18,color: Colors.white,),Gap(10),
+                      Text('Camera')
+                    ]),
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+
+                  await _selectMediaFromCamera();
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

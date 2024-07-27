@@ -185,7 +185,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       final formData = _formKeyCrime.currentState!.value;
       var uid = Uuid();
       String crimeId = uid.v1();
-      String crimeFeedbackId = uid.v1();
+
       newCrime = Crime(
           id: crimeId,
           crimeCategory: formData['crimeCategory'],
@@ -195,12 +195,13 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
             'l': [_selectedLocation!.latitude, _selectedLocation!.longitude],
           },
           conclusion: '',
-          date: formData['date'],
+          crimeDate: formData['date'],
+        postDate: DateTime.now(),
           userDescription: formData['description'],
           userTitle: formData['title'],
           assignedJudgeId: formData['assignedJudgeId'] ?? '',
           criminalIds: formData['criminalIds'] ?? [],
-          feedback: crimeFeedbackId);
+          );
       // Calculate Geohash
       var myGeoPoint = geoHash.GeoHash.encode(
           newCrime.location!['l'][0], newCrime.location!['l'][1],
@@ -223,24 +224,11 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
   }
 
   showAnimatedText(context) {
-    return SizedBox(
-      width: 250.0,
-      child: DefaultTextStyle(
-        style: const TextStyle(
-          fontSize: 20.0,
-        ),
-        child: AnimatedTextKit(
-          animatedTexts: [
-            TypewriterAnimatedText('Please wait...'),
-            TypewriterAnimatedText('Crime is being analyzed'),
-            TypewriterAnimatedText('Will be added Soon...'),
-          ],
-          onTap: () {
-            print("Tap Event");
-          },
-        ),
-      ),
-    );
+    return   SizedBox(
+          width: 32.0,
+          height: 32.0,
+          child: new CupertinoActivityIndicator());
+
   }
 
   Widget crimeDetails(context, LocationBloc locationBloc) {
@@ -273,8 +261,8 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                   // Crime Type
                   FormBuilderRadioGroup(
                     name: 'witnessType',
-                    decoration: const InputDecoration(
-                      labelText: 'Post it as',
+                    decoration:   InputDecoration(
+                      labelText: 'Hide my identity'.tr(),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -466,7 +454,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                       children: [
                         Icon(Icons.smart_toy_outlined),
                         Gap(8),
-                        const Text('Rewrite Description using AI'),
+                        const Text('Rewrite Description using AI').tr(),
                       ],
                     ),
                   ),
@@ -630,15 +618,8 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
               witnessId: FirebaseAuth.instance.currentUser!.uid,
               urls: evidenceMediaUrls,
             );
-
-            if (myCrimeObj.evidence != null) {
-              myCrimeObj.evidence!.add(newEvidence.id!);
-            }else{
-              myCrimeObj.evidence = [];
-              myCrimeObj.evidence!.add(newEvidence.id!);
-            }
             await evidenceBloc.createEvidence(newEvidence);
-
+            //Save Witness
             String witnessId = FirebaseAuth.instance.currentUser!.uid;
             Witness newWitness = Witness(
               id: witnessId,
@@ -652,37 +633,33 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
             }
             await witnessBloc.createWitness(newWitness);
 
-
             //Create CrimeOBJ
-            if (myCrimeObj.witnesses != null) {
-              myCrimeObj.witnesses!.add(witnessId);
-            }
-
-
-            if(myCrimeObj.evidence == null){
-              myCrimeObj.evidence= [];
-              myCrimeObj.evidence!.add(newEvidence.id!);
-            }else{
-              myCrimeObj.evidence!.add(newEvidence.id!);
-            }
             if(myCrimeObj.witnesses == null){
               myCrimeObj.witnesses= [];
               myCrimeObj.witnesses!.add(newWitness.id!);
             }else{
               myCrimeObj.witnesses!.add(newWitness.id!);
             }
-
             myCrimeObj.judgeRemarks = [];
+            if(myCrimeObj.evidence == null){
+              myCrimeObj.evidence= [];
+              myCrimeObj.evidence!.add(newEvidence.id!);
+            }else{
+              myCrimeObj.evidence!.add(newEvidence.id!);
+            }
+            var uid = Uuid();
+            var crimeFeedbackId = uid.v1();
+            myCrimeObj.feedback = crimeFeedbackId;
+
             await crimeBloc.createCrime(myCrimeObj).then((_) {
               // Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Crime report submitted!'),
+                  content: Text('Crime Report Submitted!'),
                 ),
               );
             });
-            var uid = Uuid();
-            var crimeFeedbackId = uid.v1();
+
             CrimeFeedback crimeFeedback = CrimeFeedback(
               id: crimeFeedbackId,
               crimeId: newCrime.id,

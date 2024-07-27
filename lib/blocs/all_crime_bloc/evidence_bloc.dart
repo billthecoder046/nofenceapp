@@ -226,7 +226,7 @@ class EvidenceBloc extends ChangeNotifier {
   // --- Helper Functions ---
   Future<List<String>> fetchEvidenceImageUrls(Crime crime) async {
     List<String> imageUrls = [];
-  print("Crime evidence(${}")
+  print("Crime evidence(${crime.evidence.toString()}");
     if (crime.evidence != null) {
 
       for (String evidenceId in crime.evidence!) {
@@ -235,8 +235,10 @@ class EvidenceBloc extends ChangeNotifier {
               .collection(FirebaseConfig.evidenceCollection)
               .doc(evidenceId)
               .get();
+          print("MyEvidence bloc is: ${evidenceDoc.data()}");
 
           if (evidenceDoc.exists) {
+            print('o1');
             final evidenceData = Evidence.fromJSON(evidenceDoc.data() as Map<String, dynamic>);
             if (evidenceData.urls != null) {
               imageUrls.addAll(evidenceData.urls!);
