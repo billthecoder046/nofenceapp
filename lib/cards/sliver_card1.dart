@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/article.dart';
-import 'package:nofence/utils/cached_image.dart';
-import 'package:nofence/utils/next_screen.dart';
-import 'package:nofence/widgets/video_icon.dart';
+import 'package:crimebook/models/article.dart';
+import 'package:crimebook/utils/cached_image.dart';
+import 'package:crimebook/utils/next_screen.dart';
+import 'package:crimebook/widgets/video_icon.dart';
 
 class SliverCard1 extends StatelessWidget {
   final Article d;

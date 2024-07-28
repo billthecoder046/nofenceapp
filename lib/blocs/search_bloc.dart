@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/article.dart';
+import 'package:crimebook/models/article.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchBloc with ChangeNotifier {

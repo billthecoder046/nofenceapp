@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/popular_articles_bloc.dart';
-import 'package:nofence/cards/card1.dart';
-import 'package:nofence/pages/more_articles.dart';
-import 'package:nofence/utils/loading_cards.dart';
-import 'package:nofence/utils/next_screen.dart';
+import 'package:crimebook/blocs/popular_articles_bloc.dart';
+import 'package:crimebook/cards/card1.dart';
+import 'package:crimebook/pages/more_articles.dart';
+import 'package:crimebook/utils/loading_cards.dart';
+import 'package:crimebook/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

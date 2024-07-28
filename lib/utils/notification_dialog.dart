@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/services/app_service.dart';
+import 'package:crimebook/services/app_service.dart';
 import '../models/notification.dart';
 import 'next_screen.dart';
 

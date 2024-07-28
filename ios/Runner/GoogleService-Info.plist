@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.nofence.skillzupp.nofence</string>
+	<string>com.crimebook.skillzupp.crimebook</string>
 	<key>PROJECT_ID</key>
 	<string>billnews-c5913</string>
 	<key>STORAGE_BUCKET</key>

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:nofence/pages/welcome.dart';
-import 'package:nofence/utils/next_screen.dart';
+import 'package:crimebook/pages/welcome.dart';
+import 'package:crimebook/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../blocs/sign_in_bloc.dart';

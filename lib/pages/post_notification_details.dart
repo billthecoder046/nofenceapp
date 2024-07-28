@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:nofence/pages/video_article_details.dart';
+import 'package:crimebook/pages/video_article_details.dart';
 
 import '../models/article.dart';
 import 'article_details.dart';

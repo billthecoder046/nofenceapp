@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/theme_bloc.dart';
-import 'package:nofence/models/custom_color.dart';
+import 'package:crimebook/blocs/theme_bloc.dart';
+import 'package:crimebook/models/custom_color.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 import 'package:provider/provider.dart';
 

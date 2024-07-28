@@ -1,4 +1,4 @@
-package mrblab.nofence
+package com.billthecoder.crimebook
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:nofence/blocs/theme_bloc.dart';
-import 'package:nofence/models/custom_color.dart';
+import 'package:crimebook/blocs/theme_bloc.dart';
+import 'package:crimebook/models/custom_color.dart';
 import 'package:provider/provider.dart';
 
 import '../services/app_service.dart';

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/utils/icons.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/utils/icons.dart';
 import 'package:provider/provider.dart';
 
 

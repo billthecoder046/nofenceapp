@@ -105,7 +105,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:856668204005:android:0015014f6617917d3a1d0c",
         "android_client_info": {
-          "package_name": "mrblab.nofence"
+          "package_name": "com.billthecoder.crimebook"
         }
       },
       "oauth_client": [

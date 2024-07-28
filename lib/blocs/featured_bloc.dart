@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nofence/models/article.dart';
+import 'package:crimebook/models/article.dart';
 
 class FeaturedBloc with ChangeNotifier {
 

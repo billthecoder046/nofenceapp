@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nofence/config/config.dart';
+import 'package:crimebook/config/config.dart';
 
 class ThemeModel {
   final lightMode = ThemeData(

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:nofence/models/article.dart';
+import 'package:crimebook/models/article.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ViewsCount extends StatefulWidget {

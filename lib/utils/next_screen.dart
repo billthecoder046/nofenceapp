@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/article.dart';
-import 'package:nofence/pages/article_details.dart';
-import 'package:nofence/pages/video_article_details.dart';
+import 'package:crimebook/models/article.dart';
+import 'package:crimebook/pages/article_details.dart';
+import 'package:crimebook/pages/video_article_details.dart';
 
 import '../models/notification.dart';
 import '../pages/custom_notification_details.dart';

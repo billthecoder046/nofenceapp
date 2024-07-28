@@ -1,4 +1,4 @@
-package com.nofence.skillzupp.nofence;
+package com.crimebook.skillzupp.crimebook;
 
 import io.flutter.embedding.android.FlutterActivity;
 

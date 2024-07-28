@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/widgets/video_icon.dart';
+import 'package:crimebook/widgets/video_icon.dart';
 
 import '../models/all_crime_models/crime.dart';
 

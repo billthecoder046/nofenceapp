@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:nofence/blocs/ads_bloc.dart';
-import 'package:nofence/blocs/notification_bloc.dart';
-import 'package:nofence/pages/categories.dart';
-import 'package:nofence/pages/explore.dart';
-import 'package:nofence/pages/profile.dart';
-import 'package:nofence/pages/videos.dart';
-import 'package:nofence/services/notification_service.dart';
+import 'package:crimebook/blocs/ads_bloc.dart';
+import 'package:crimebook/blocs/notification_bloc.dart';
+import 'package:crimebook/pages/categories.dart';
+import 'package:crimebook/pages/explore.dart';
+import 'package:crimebook/pages/profile.dart';
+import 'package:crimebook/pages/videos.dart';
+import 'package:crimebook/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

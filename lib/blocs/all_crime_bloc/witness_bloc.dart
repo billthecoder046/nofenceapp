@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/all_crime_models/witness.dart';
-import 'package:nofence/config/firebase_config.dart';
+import 'package:crimebook/models/all_crime_models/witness.dart';
+import 'package:crimebook/config/firebase_config.dart';
 
 import 'ciminal_bloc.dart';
 import 'crime_bloc.dart';

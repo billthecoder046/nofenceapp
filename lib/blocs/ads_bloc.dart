@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';                      //admob ads
 //import 'package:facebook_audience_network/facebook_audience_network.dart';    //fb ads
-import 'package:nofence/config/ad_config.dart';
+import 'package:crimebook/config/ad_config.dart';
 
 class AdsBloc extends ChangeNotifier {
 

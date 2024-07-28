@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/all_crime_bloc/crime_bloc.dart';
-import 'package:nofence/blocs/justice_bloc.dart';
-import 'package:nofence/widgets/justice_post_issue.dart';
+import 'package:crimebook/blocs/all_crime_bloc/crime_bloc.dart';
+import 'package:crimebook/blocs/justice_bloc.dart';
+import 'package:crimebook/widgets/justice_post_issue.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/all_issues.dart';

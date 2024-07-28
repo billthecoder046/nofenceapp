@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/models/comment.dart';
-import 'package:nofence/config/firebase_config.dart'; // Import FirebaseConfig
+import 'package:crimebook/models/comment.dart';
+import 'package:crimebook/config/firebase_config.dart'; // Import FirebaseConfig
 
 class CommentBloc extends ChangeNotifier {
   // State variables

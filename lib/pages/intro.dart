@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:nofence/config/config.dart';
-import 'package:nofence/pages/home.dart';
-import 'package:nofence/utils/next_screen.dart';
+import 'package:crimebook/config/config.dart';
+import 'package:crimebook/pages/home.dart';
+import 'package:crimebook/utils/next_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class IntroPage extends StatefulWidget {

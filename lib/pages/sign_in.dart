@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/pages/done.dart';
-import 'package:nofence/pages/forgot_password.dart';
-import 'package:nofence/pages/sign_up.dart';
-import 'package:nofence/services/app_service.dart';
-import 'package:nofence/utils/icons.dart';
-import 'package:nofence/utils/next_screen.dart';
-import 'package:nofence/utils/snacbar.dart';
-import 'package:nofence/widgets/privacy_info.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/pages/done.dart';
+import 'package:crimebook/pages/forgot_password.dart';
+import 'package:crimebook/pages/sign_up.dart';
+import 'package:crimebook/services/app_service.dart';
+import 'package:crimebook/utils/icons.dart';
+import 'package:crimebook/utils/next_screen.dart';
+import 'package:crimebook/utils/snacbar.dart';
+import 'package:crimebook/widgets/privacy_info.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -222,7 +222,10 @@ class _SignInPageState extends State<SignInPage> {
                         child: signInStart == false 
                       ? Text('sign in', style: TextStyle(fontSize: 16, color: Colors.white)).tr()
                       : signInComplete == false 
-                      ? CircularProgressIndicator(backgroundColor: Colors.white,)
+                      ? SizedBox(
+                            width: 32.0,
+                            height: 32.0,
+                            child: new CupertinoActivityIndicator())
                       : Text('sign in successful!', style: TextStyle(fontSize: 16, color: Colors.white)).tr(),
                         onPressed: (){
                          handleSignInwithemailPassword();

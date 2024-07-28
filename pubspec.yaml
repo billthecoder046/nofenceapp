@@ -1,4 +1,4 @@
-name: nofence
+name: crimebook
 description: "A new Flutter project that will use AI to diaganose accidents and issues to help judges to analyze more better and give their judgments frequently"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,20 +34,20 @@ dependencies:
   cached_network_image: ^3.3.1
   cloud_firestore: ^5.1.0
   cupertino_icons: ^1.0.5
-  dots_indicator: ^3.0.0
-  easy_localization: ^3.0.0
+  dots_indicator: ^2.1.2
+  easy_localization: ^3.0.7
   firebase_auth: ^5.1.2
   firebase_core: ^3.2.0
-  firebase_messaging: ^15.0.2
-  firebase_storage: ^12.1.0
+#  firebase_messaging: ^15.0.3
+  firebase_storage: ^12.1.1
   flutter_web_browser: ^0.17.1
   flutter_html: ^3.0.0-beta.2
   google_fonts: ^6.2.1
-  google_sign_in: ^6.1.1
+  google_sign_in: ^6.2.1
   html_unescape: ^2.0.0
   image_picker: ^1.1.2
-  intl: ^0.18.0
-  introduction_screen: ^3.1.8
+  intl: ^0.19.0
+  introduction_screen: ^3.1.14
   launch_review: ^3.0.1
   line_icons: ^2.0.1
   lottie: ^3.1.2
@@ -80,9 +80,9 @@ dependencies:
     git:
       url: https://github.com/westdabestdb/md2_tab_indicator
   rounded_loading_button_plus: ^3.0.1
-  flutter_native_splash: ^2.4.0
-  flutter_form_builder: ^9.2.1
-  form_builder_validators: ^9.1.0
+  flutter_native_splash: ^2.4.1
+  flutter_form_builder: ^9.3.0
+  form_builder_validators: ^11.0.0
   google_maps_flutter: ^2.6.1
   geolocator: ^12.0.0
   geo_firestore_flutter: ^0.1.7
@@ -95,7 +95,10 @@ dependencies:
   animated_text_kit: ^4.2.2
   carousel_slider: ^4.2.1
   get: ^4.6.6
-
+  cnic_scanner: ^0.0.4
+#  google_ml_kit: ^0.18.0
+  firebase_messaging: ^15.0.3
+  country_code_picker: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -108,7 +111,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/icon.png"
+  image_path: "assets/images/splash.png"
 
 
 
@@ -183,7 +186,7 @@ flutter_native_splash:
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
   # png file and should be sized for 4x pixel density.
-  image: assets/splash.png
+  image: assets/splashScreen/mobileSplash.gif
 
   # The branding property allows you to specify an image used as branding in the splash screen.
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,

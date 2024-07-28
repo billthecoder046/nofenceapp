@@ -1,5 +1,5 @@
-import 'package:nofence/models/all_crime_models/witness.dart';
-import 'package:nofence/models/all_crime_models/evidence.dart';
+import 'package:crimebook/models/all_crime_models/witness.dart';
+import 'package:crimebook/models/all_crime_models/evidence.dart';
 
 import '../../config/config.dart';
 import 'crimefeedback.dart';

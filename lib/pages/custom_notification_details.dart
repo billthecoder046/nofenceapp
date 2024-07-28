@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:nofence/widgets/html_body.dart';
+import 'package:crimebook/widgets/html_body.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../models/notification.dart';

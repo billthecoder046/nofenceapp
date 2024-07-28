@@ -6,6 +6,7 @@ class FirebaseConfig{
   static const String judgeDecisionsCollection = 'judgeDecisions';
   static const String criminalsCollection = 'criminals';
   static const String crimeFeedbackCollection = 'crimeFeedback';
+  static const String usersCollection = 'users';
 
   // Subcollections (for comments)
   static const String commentsSubcollection = 'comments';

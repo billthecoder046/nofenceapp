@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.nofence.skillzupp" "\0"
-            VALUE "FileDescription", "nofence" "\0"
+            VALUE "CompanyName", "com.crimebook.skillzupp" "\0"
+            VALUE "FileDescription", "crimebook" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "nofence" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.nofence.skillzupp. All rights reserved." "\0"
-            VALUE "OriginalFilename", "nofence.exe" "\0"
-            VALUE "ProductName", "nofence" "\0"
+            VALUE "InternalName", "crimebook" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.crimebook.skillzupp. All rights reserved." "\0"
+            VALUE "OriginalFilename", "crimebook.exe" "\0"
+            VALUE "ProductName", "crimebook" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

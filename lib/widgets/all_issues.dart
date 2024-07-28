@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/all_crime_bloc/crime_bloc.dart';
-import 'package:nofence/blocs/justice_bloc.dart';
-import 'package:nofence/cardsJustice/justiceCard2.dart';
+import 'package:crimebook/blocs/all_crime_bloc/crime_bloc.dart';
+import 'package:crimebook/blocs/justice_bloc.dart';
+import 'package:crimebook/cardsJustice/justiceCard2.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

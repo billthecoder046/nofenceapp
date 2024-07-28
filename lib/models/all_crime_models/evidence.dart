@@ -1,4 +1,4 @@
-import 'package:nofence/models/comment.dart';
+import 'package:crimebook/models/comment.dart';
 
 enum EvidenceType {
   photo, // Photograph

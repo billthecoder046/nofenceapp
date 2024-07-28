@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/related_articles_bloc.dart';
-import 'package:nofence/cards/card3.dart';
+import 'package:crimebook/blocs/related_articles_bloc.dart';
+import 'package:crimebook/cards/card3.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

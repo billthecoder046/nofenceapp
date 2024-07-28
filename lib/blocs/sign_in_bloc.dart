@@ -7,14 +7,14 @@ import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:nofence/blocs/sign_up/user_logic.dart';
-import 'package:nofence/pages/sign_up2.dart';
-import 'package:nofence/utils/next_screen.dart';
+import 'package:crimebook/pages/sign_up2.dart';
+import 'package:crimebook/utils/next_screen.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../models/userModel.dart';
+import 'getxLogics/user_logic.dart';
 
 class SignInBloc extends ChangeNotifier {
 
@@ -229,7 +229,7 @@ class SignInBloc extends ChangeNotifier {
       this._signInProvider = 'email';
 
       _hasError = false;
-      nextScreenCriminalDetails(context, SignUpPage2());
+      nextScreen(context, SignUpPage2());
       notifyListeners();
     }catch(e){
       _hasError = true;

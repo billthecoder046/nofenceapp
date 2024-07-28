@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/pages/profile.dart';
-import 'package:nofence/utils/next_screen.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/pages/profile.dart';
+import 'package:crimebook/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

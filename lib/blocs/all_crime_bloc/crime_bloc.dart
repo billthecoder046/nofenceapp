@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
-import 'package:nofence/models/all_crime_models/crime.dart';
+import 'package:crimebook/models/all_crime_models/crime.dart';
 import 'package:provider/provider.dart';
 import '../../config/config.dart';
 import '../../config/firebase_config.dart';

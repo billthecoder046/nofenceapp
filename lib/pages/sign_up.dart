@@ -1,13 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/pages/done.dart';
-import 'package:nofence/pages/sign_in.dart';
-import 'package:nofence/services/app_service.dart';
-import 'package:nofence/utils/buttons.dart';
-import 'package:nofence/utils/icons.dart';
-import 'package:nofence/utils/next_screen.dart';
-import 'package:nofence/utils/snacbar.dart';
-import 'package:nofence/widgets/privacy_info.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/pages/done.dart';
+import 'package:crimebook/pages/sign_in.dart';
+import 'package:crimebook/services/app_service.dart';
+import 'package:crimebook/utils/buttons.dart';
+import 'package:crimebook/utils/icons.dart';
+import 'package:crimebook/utils/next_screen.dart';
+import 'package:crimebook/utils/snacbar.dart';
+import 'package:crimebook/widgets/privacy_info.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -68,44 +69,6 @@ class _SignUpPageState extends State<SignUpPage> {
             signUpStarted = true;
           });
           sb.signUpwithEmailPassword(context, name, email, pass);
-        }
-      });
-    }
-  }
-  Future handleSignUpSecondScreen () async{
-    final SignInBloc sb = Provider.of<SignInBloc>(context, listen: false );
-    if (formKey.currentState!.validate()){
-      formKey.currentState!.save();
-      FocusScope.of(context).requestFocus(new FocusNode());
-      await AppService().checkInternet().then((hasInternet){
-        if(hasInternet == false){
-          openSnacbar(context, 'no internet'.tr());
-        }
-        else{
-          setState(() {
-            signUpStarted = true;
-          });
-          sb.signUpwithEmailPassword(context,name, email, pass).then((_)async{
-            if(sb.hasError == false){
-              sb.getTimestamp()
-                  .then((value) => sb.saveToFirebase()
-                  .then((value) => sb.increaseUserCount())
-                  .then((value) => sb.guestSignout()
-                  .then((value) => sb.saveDataToSP()
-                  .then((value) => sb.setSignIn()
-                  .then((value){
-                setState(() {
-                  signUpCompleted = true;
-                });
-                afterSignUp();
-              })))));
-            } else{
-              setState(() {
-                signUpStarted = false;
-              });
-              openSnacbar(context, sb.errorCode);
-            }
-          });
         }
       });
     }
@@ -232,11 +195,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   height: 45,
                   width: double.infinity,
-                  child: myFirstButton(text: signUpStarted == false
+                  child: myFirstButton(
+                      text: signUpStarted == false
                       ? Text('sign up', style: TextStyle(fontSize: 16, color: Colors.white),).tr()
                       : signUpCompleted == false
-                      ? CircularProgressIndicator(backgroundColor: Colors.white)
-                      : Text('sign up successful!', style: TextStyle(fontSize: 16, color: Colors.white)).tr(),onPressed: (){
+                      ? SizedBox(
+                          width: 32.0,
+                          height: 32.0,
+                          child: new CupertinoActivityIndicator())
+                      : Text('sign up successful!', style: TextStyle(fontSize: 16, color: Colors.white)).tr(),
+                      onPressed: (){
                     handleSignUpwithEmailPassword();
                   })
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Config{
 
   
-  final String appName = 'nofence';
+  final String appName = 'crimebook';
   final String splashIcon = 'assets/images/splash.png';
   final String supportEmail = 'billthecoder046@gmail.com';
   final String privacyPolicyUrl = 'https://drive.google.com/file/d/1dyA59UfoY_EFL_pINTq-B1aM7IrZGsuE/view?usp=sharing';

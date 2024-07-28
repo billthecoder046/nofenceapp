@@ -1,10 +1,10 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/featured_bloc.dart';
-import 'package:nofence/blocs/theme_bloc.dart';
-import 'package:nofence/cards/featured_card.dart';
-import 'package:nofence/models/custom_color.dart';
-import 'package:nofence/utils/loading_cards.dart';
+import 'package:crimebook/blocs/featured_bloc.dart';
+import 'package:crimebook/blocs/theme_bloc.dart';
+import 'package:crimebook/cards/featured_card.dart';
+import 'package:crimebook/models/custom_color.dart';
+import 'package:crimebook/utils/loading_cards.dart';
 import 'package:provider/provider.dart';
 
 class Featured extends StatefulWidget {
@@ -55,7 +55,7 @@ class _FeaturedState extends State<Featured> {
         Center(
           child: DotsIndicator(
             dotsCount: fb.data.isEmpty ? 5 : fb.data.length,
-            position: listIndex,
+            position: double.parse(listIndex.toString()),
             decorator: DotsDecorator(
               color: Colors.black26,
               activeColor: Theme.of(context).primaryColorDark,

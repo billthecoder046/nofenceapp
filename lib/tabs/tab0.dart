@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/featured_bloc.dart';
-import 'package:nofence/blocs/popular_articles_bloc.dart';
-import 'package:nofence/blocs/recent_articles_bloc.dart';
-import 'package:nofence/widgets/featured.dart';
-import 'package:nofence/widgets/popular_articles.dart';
-import 'package:nofence/widgets/recent_articles.dart';
+import 'package:crimebook/blocs/featured_bloc.dart';
+import 'package:crimebook/blocs/popular_articles_bloc.dart';
+import 'package:crimebook/blocs/recent_articles_bloc.dart';
+import 'package:crimebook/widgets/featured.dart';
+import 'package:crimebook/widgets/popular_articles.dart';
+import 'package:crimebook/widgets/recent_articles.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/search_bar.dart';

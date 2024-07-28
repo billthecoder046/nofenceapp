@@ -36,9 +36,8 @@ class UserLogic extends GetxController {
       uid: sp.getString('uid'),
       name: sp.getString('name'),
       email: sp.getString('email'),
-      cnic: sp.getString('cnic'),
+      cnicNo: sp.getString('cnicNo'),
       phoneNumber: sp.getString('phoneNumber'),
-      cnicUrl: sp.getString('cnicUrl'),
       profilePicUrl: sp.getString('profilePicUrl'),
       userType: UserType.values.byName(sp.getString('userType') ?? 'unknown'),
     );
@@ -51,9 +50,8 @@ class UserLogic extends GetxController {
     await sp.setString('uid', currentUser.value!.uid!);
     await sp.setString('name', currentUser.value!.name!);
     await sp.setString('email', currentUser.value!.email!);
-    await sp.setString('cnic', currentUser.value!.cnic!);
+    await sp.setString('cnicNo', currentUser.value!.cnicNo!);
     await sp.setString('phoneNumber', currentUser.value!.phoneNumber!);
-    await sp.setString('cnicUrl', currentUser.value!.cnicUrl!);
     await sp.setString('profilePicUrl', currentUser.value!.profilePicUrl!);
     await sp.setString('userType', currentUser.value!.userType!.name);
   }
@@ -163,11 +161,11 @@ class UserLogic extends GetxController {
   // }
 
   // Sign up with email and password
-  Future signUpwithEmailPassword(MyUser myUser) async {
+  Future signUpwithEmailPassword(MyUser myUser,email, password) async {
     try {
       final User? user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: myUser.email!,
-        password: myUser.password!,
+        email: email!,
+        password: password!,
       ))
           .user!;
       assert(user != null);
@@ -175,9 +173,8 @@ class UserLogic extends GetxController {
       currentUser.value = MyUser(
           uid: user.uid,
           name: myUser.name,
-          email: user.email,
-          profilePicUrl: myUser.profilePicUrl,
-          userType: UserType.crimeReporter);
+          email: myUser.email,
+          );
       isSignedIn.value = true;
       hasError.value = false;
       update();

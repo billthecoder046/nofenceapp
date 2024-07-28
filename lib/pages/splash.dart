@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nofence/config/config.dart';
-import 'package:nofence/pages/welcome.dart';
+import 'package:crimebook/config/config.dart';
+import 'package:crimebook/pages/welcome.dart';
 import 'package:provider/provider.dart';
 import '../blocs/sign_in_bloc.dart';
 import '../utils/next_screen.dart';

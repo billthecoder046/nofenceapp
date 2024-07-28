@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/utils/buttons.dart';
-import 'package:nofence/utils/dialog.dart';
-import 'package:nofence/utils/snacbar.dart';
+import 'package:crimebook/utils/buttons.dart';
+import 'package:crimebook/utils/dialog.dart';
+import 'package:crimebook/utils/snacbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

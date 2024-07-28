@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nofence/blocs/recent_articles_bloc.dart';
-import 'package:nofence/cards/card2.dart';
-import 'package:nofence/cards/card4.dart';
-import 'package:nofence/cards/card5.dart';
+import 'package:crimebook/blocs/recent_articles_bloc.dart';
+import 'package:crimebook/cards/card2.dart';
+import 'package:crimebook/cards/card4.dart';
+import 'package:crimebook/cards/card5.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 

@@ -1,20 +1,32 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_instance/get_instance.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/blocs/sign_up/user_logic.dart';
-import 'package:nofence/pages/done.dart';
-import 'package:nofence/pages/sign_in.dart';
-import 'package:nofence/services/app_service.dart';
-import 'package:nofence/utils/buttons.dart';
-import 'package:nofence/utils/icons.dart';
-import 'package:nofence/utils/next_screen.dart';
-import 'package:nofence/utils/snacbar.dart';
-import 'package:nofence/widgets/privacy_info.dart';
-import 'package:provider/provider.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
-import '../models/userModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cnic_scanner/cnic_scanner.dart';
+import 'package:cnic_scanner/model/cnic_model.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/pages/done.dart';
+import 'package:crimebook/utils/toast.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:crimebook/blocs/all_crime_bloc/ciminal_bloc.dart'; // Import your CriminalBloc
+import 'package:crimebook/models/all_crime_models/criminals.dart';
+import 'package:crimebook/pages/phoneAuthScreen.dart';
+import 'package:crimebook/utils/next_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:crimebook/utils/buttons.dart';
+
+import '../blocs/getxLogics/user_logic.dart';
+import '../config/firebase_config.dart';
+import '../models/userModel.dart'; // Assuming you have this widget
 
 class SignUpPage2 extends StatefulWidget {
   final String? tag;
@@ -22,70 +34,209 @@ class SignUpPage2 extends StatefulWidget {
   SignUpPage2({Key? key, this.tag}) : super(key: key);
 
   @override
-  _SignUpPage2State createState() => _SignUpPage2State();
+  State<SignUpPage2> createState() => _SignUpPage2State();
 }
 
 class _SignUpPage2State extends State<SignUpPage2> {
-  bool offsecureText = true;
-  Icon lockIcon = LockIcon().lock;
-  var emailCtrl = TextEditingController();
-  var passCtrl = TextEditingController();
-  var nameCtrl = TextEditingController();
-  var formKey = GlobalKey<FormState>();
-
-  late String email;
-  late String pass;
+  final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
+  List<XFile> _selectedMedia = [];
+  String? cnicUrl;
+  String? profilePicUrl;
+  bool isLoading = false;
+  bool isSavingCriminal = false;
+  bool isImageUploaded = false;
+  bool isCnicUploaded = false;
+  bool isPhoneAuthenticated = false;
+  final _phoneNumberController = TextEditingController();
+  final _cnicController = TextEditingController();
+  final _dobController = TextEditingController();
+  final _issueDate = TextEditingController();
+  final _expiryDate = TextEditingController();
+  String? _verificationId;
+  String? _smsCode;
+  UserType? selectedUserType;
+  UserGender? selectedUserGender;
   String? name;
-  bool signUpStarted = false;
+  String? cnic;
+  String? phoneNumber;
   bool signUpCompleted = false;
+  bool signUpStarted = false;
 
-  void lockPressed() {
-    if (offsecureText == true) {
-      setState(() {
-        offsecureText = false;
-        lockIcon = LockIcon().open;
-      });
-    } else {
-      setState(() {
-        offsecureText = true;
-        lockIcon = LockIcon().lock;
-      });
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _selectMedia() async {
+    try {
+      final List<XFile>? pickedMedia = await _picker.pickMultiImage(imageQuality: 50);
+      if (pickedMedia != null && pickedMedia.isNotEmpty) {
+        setState(() {
+          _selectedMedia = pickedMedia;
+        });
+      }
+    } catch (e) {
+      print('Error picking media: $e');
     }
   }
 
-  Future handleSignUpSecondScreen() async {
-    final SignInBloc sb = Provider.of<SignInBloc>(context, listen: false);
-    if (formKey.currentState!.validate()) {
-      formKey.currentState!.save();
-      FocusScope.of(context).requestFocus(new FocusNode());
-      await AppService().checkInternet().then((hasInternet) {
-        if (hasInternet == false) {
-          openSnacbar(context, 'no internet');
-        } else {
-          setState(() {
-            signUpStarted = true;
-          });
-          sb.signUpwithEmailPassword(context,name, email, pass).then((_) async {
-            if (sb.hasError == false) {
-              sb.getTimestamp().then((value) => sb
-                  .saveToFirebase()
-                  .then((value) => sb.increaseUserCount())
-                  .then((value) => sb.guestSignout().then((value) =>
-                      sb.saveDataToSP().then((value) => sb.setSignIn().then((value) {
-                            setState(() {
-                              signUpCompleted = true;
-                            });
-                            afterSignUp();
-                          })))));
-            } else {
-              setState(() {
-                signUpStarted = false;
-              });
-              openSnacbar(context, sb.errorCode);
-            }
-          });
+  Future<void> _uploadCNICImage(ImageSource source) async {
+    try {
+      final XFile? pickedImage = await _picker.pickImage(source: source);
+
+      // Determine format based on image type (e.g., img.Format.jpeg)
+
+      if (pickedImage != null) {
+        final file = File(pickedImage.path);
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('users')
+            .child('${FirebaseAuth.instance.currentUser!.uid}')
+            .child('cnic')
+            .child('cnic.jpg');
+        try {
+          final uploadTask = await storageRef.putFile(file);
+          cnicUrl = await uploadTask.ref.getDownloadURL();
+          print('CNIC Image URL: $cnicUrl');
+        } catch (e) {
+          print('Error uploading CNIC Image: $e');
         }
+      }
+    } catch (e) {
+      print('Error picking CNIC Image: $e');
+    }
+  }
+
+  XFile? pickedProfileImage;
+
+  // Function to upload Profile Picture to Firebase Storage
+  Future<void> _uploadProfilePicture() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      pickedProfileImage = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedProfileImage != null) {
+        final file = File(pickedProfileImage!.path);
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('users')
+            .child('${FirebaseAuth.instance.currentUser!.uid}')
+            .child('profile')
+            .child('profile.jpg');
+        try {
+          final uploadTask = await storageRef.putFile(file);
+          profilePicUrl = await uploadTask.ref.getDownloadURL();
+          setState(() {});
+          print('Profile Picture URL: $profilePicUrl');
+        } catch (e) {
+          print('Error uploading Profile Picture: $e');
+        }
+      }
+    } catch (e) {
+      print('Error picking Profile Picture: $e');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  //Widget for circular Image
+  Widget _circularImage(context) {
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          isLoading = true;
+        });
+        await _uploadProfilePicture();
+        setState(() {
+          isLoading = false;
+        });
+      },
+      child: CircleAvatar(
+        radius: 50, // Adjust the radius as needed
+        backgroundColor: Colors.grey[300],
+        child: profilePicUrl == null
+            ? Icon(Icons.image, color: Colors.grey[700])
+            : isLoading
+                ? SizedBox(
+                    width: 32.0, height: 32.0, child: new CupertinoActivityIndicator())
+                : ClipOval(
+                    child: Image.network(
+                      profilePicUrl!,
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 100,
+                    ),
+                  ),
+      ),
+    );
+  }
+
+  // Save User Details to Firestore
+  bool allChecksPassed() {
+    if (isPhoneAuthenticated == false) {
+      openToast(context, 'Must verify phone number');
+    } else if (_cnicModel.cnicNumber.isEmpty) {
+      openToast(context, 'Try uploading cnic again');
+    } else if (selectedUserType == null) {
+      openToast(context, 'Please select User type');
+    } else {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _saveUserDetails() async {
+    var sb = Provider.of<SignInBloc>(context, listen: false);
+    var uC = Get.find<UserLogic>();
+    DateFormat formatter = DateFormat('dd/MM/yyyy');
+
+    if (_saveUserDetails() == false) {
+      return;
+    }
+
+    var newUser = MyUser(
+      uid: FirebaseAuth.instance.currentUser!.uid,
+      name: uC.currentUser.value!.name ??
+          FirebaseAuth.instance.currentUser!.displayName ??
+          '',
+      email:
+          uC.currentUser.value!.email ?? FirebaseAuth.instance.currentUser!.email ?? '',
+      cnicNo: _cnicModel.cnicNumber,
+      cnicDob: formatter.parse(_cnicModel.cnicHolderDateOfBirth),
+      cnicExpiryDate: formatter.parse(_cnicModel.cnicExpiryDate),
+      cnicIssueDate: formatter.parse(_cnicModel.cnicIssueDate),
+      phoneNumber: _phoneNumberController.text,
+      profilePicUrl: profilePicUrl,
+      gender: selectedUserGender!.name == UserGender.female
+          ? UserGender.female
+          : UserGender.male,
+      userType: selectedUserType,
+    );
+    uC.currentUser.value = newUser;
+    uC.currentUser.refresh();
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseConfig.usersCollection)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(uC.currentUser.value!.toJSON())
+          .then((value) {
+        sb.getTimestamp().then((value) => sb
+            .saveToFirebase()
+            .then((value) => sb.increaseUserCount())
+            .then((value) => sb.guestSignout().then(
+                (value) => sb.saveDataToSP().then((value) => sb.setSignIn().then((value) {
+                      setState(() {
+                        signUpCompleted = true;
+                      });
+                      afterSignUp();
+                    })))));
       });
+
+      // ... (Navigate to the next screen or handle success) ...
+    } catch (e) {
+      print('Error saving user details: $e');
     }
   }
 
@@ -97,163 +248,283 @@ class _SignUpPage2State extends State<SignUpPage2> {
     }
   }
 
+  CnicModel _cnicModel = CnicModel();
+  bool showCnicDetails = false;
+
+  TextEditingController nameTEController = TextEditingController(),
+      cnicTEController = TextEditingController(),
+      dobTEController = TextEditingController(),
+      doiTEController = TextEditingController(),
+      doeTEController = TextEditingController();
+
+  Future<void> scanCnic(ImageSource imageSource) async {
+    /// you will need to pass one argument of "ImageSource" as shown here
+    CnicModel? cnicModel = await CnicScanner().scanImage(imageSource: imageSource);
+    if (cnicModel.cnicNumber.isNotEmpty) {
+      setState(() {
+        showCnicDetails = true;
+        _cnicModel = cnicModel;
+        nameTEController.text = _cnicModel.cnicHolderName;
+        cnicTEController.text = _cnicModel.cnicNumber;
+        dobTEController.text = _cnicModel.cnicHolderDateOfBirth;
+        doiTEController.text = _cnicModel.cnicIssueDate;
+        doeTEController.text = _cnicModel.cnicExpiryDate;
+        print(_cnicModel.toString());
+      });
+    }
+  }
+
+  // Handle Code Verification
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _phoneNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).canvasColor,
-        body: Form(
-          key: formKey,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 0),
-            child: ListView(
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  width: double.infinity,
-                  child: IconButton(
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(Icons.keyboard_backspace),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
-                ),
-                Text('Add Important Details',
-                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900))
-                    .tr(),
-                Text('follow the simple steps',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).secondaryHeaderColor))
-                    .tr(),
-                SizedBox(
-                  height: 60,
-                ),
-                TextFormField(
-                  controller: nameCtrl,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    hintText: 'Enter Name',
-                    //prefixIcon: Icon(Icons.person)
+      appBar: AppBar(
+        title: const Text('Complete Your Profile'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Gap(10),
+            _circularImage(context),
+            Card(
+              elevation: 5,
+              margin: EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // CNIC
+                        getUploadRow(context),
+
+                        SizedBox(height: 16.0),
+
+                        // Phone Number
+                        TextFormField(
+                          controller: _phoneNumberController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            hintText: 'Enter your Phone Number',
+                            suffixIcon: TextButton(
+                              child: Text(
+                                "Verify",
+                                style: TextStyle(
+                                    color: Colors.blue, fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                // Clear the text field
+                                nextScreen(context,
+                                    PhoneAuthPage(number: _phoneNumberController.text));
+                              },
+                            ),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your phone number';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+
+                        // Verify Phone Number Button
+
+                        // Gender Selection (Radio Buttons)
+                        FormBuilderRadioGroup(
+                          name: 'gender',
+                          decoration: InputDecoration(
+                            labelText: 'Gender',
+                          ),
+                          options: [
+                            FormBuilderFieldOption(
+                              value: 'Male',
+                              child: Text('Male'),
+                            ),
+                            FormBuilderFieldOption(
+                              value: 'Female',
+                              child: Text('Female'),
+                            ),
+                          ],
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select your gender';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            print(value);
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+
+                        // Profile Picture Upload
+
+                        SizedBox(height: 16.0),
+
+                        // User Type Selection (Dropdown)
+                        FormBuilderDropdown(
+                          name: 'userType',
+                          decoration: InputDecoration(
+                            labelText: 'User Type',
+                          ),
+                          items: UserType.values
+                              .map((type) => DropdownMenuItem(
+                                    value: type,
+                                    child: Text(type.name.toUpperCase()),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedUserType = value as UserType;
+                            });
+                          },
+                          validator: FormBuilderValidators.required(
+                            errorText: 'Please select a User Type',
+                          ),
+                        ),
+                        SizedBox(height: 16.0),
+
+                        Center(
+                          child: myFirstButton2(
+                            onPressed: () {
+                              setState(() {
+                                setState(() {
+                                  signUpStarted = true;
+                                });
+                              });
+                              if (_formKey.currentState!.validate() &&
+                                  cnicUrl != null &&
+                                  profilePicUrl != null) {
+                                _formKey.currentState!.save();
+                                _saveUserDetails();
+                              }
+                            },
+                            text: signUpStarted == false
+                                ? Text(
+                                    'sign up',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                  ).tr()
+                                : signUpCompleted == false
+                                    ? SizedBox(
+                                width: 32.0,
+                                height: 32.0,
+                                child: new CupertinoActivityIndicator())
+                                    : Text('sign up successful!',
+                                            style: TextStyle(
+                                                fontSize: 16, color: Colors.white))
+                                        .tr(),
+                          ),
+                        ),
+
+                        // Submit Button
+
+                        // CNIC Image Upload
+                      ],
+                    ),
                   ),
-                  validator: (String? value) {
-                    if (value!.length == 0) return "Name can't be empty";
-                    return null;
-                  },
-                  onChanged: (String value) {
-                    setState(() {
-                      name = value;
-                    });
-                  },
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'username@mail.com',
-                    labelText: 'Email Address',
-                  ),
-                  controller: emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (String? value) {
-                    if (value!.length == 0) return "Email can't be empty";
-                    return null;
-                  },
-                  onChanged: (String value) {
-                    setState(() {
-                      email = value;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  controller: passCtrl,
-                  obscureText: offsecureText,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter Password',
-                    suffixIcon: IconButton(
-                        icon: lockIcon,
-                        onPressed: () {
-                          lockPressed();
-                        }),
-                  ),
-                  validator: (String? value) {
-                    if (value!.length == 0) return "Password can't be empty";
-                    return null;
-                  },
-                  onChanged: (String value) {
-                    setState(() {
-                      pass = value;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                Container(
-                    height: 45,
-                    width: double.infinity,
-                    child: myFirstButton(
-                        text: signUpStarted == false
-                            ? Text(
-                                'sign up',
-                                style: TextStyle(fontSize: 16, color: Colors.white),
-                              ).tr()
-                            : signUpCompleted == false
-                                ? CircularProgressIndicator(backgroundColor: Colors.white)
-                                : Text('sign up successful!',
-                                        style:
-                                            TextStyle(fontSize: 16, color: Colors.white))
-                                    .tr(),
-                        onPressed: () {
-                          var myController = Get.put(UserLogic());
-                          var mySignInBloc =
-                              Provider.of<SignInBloc>(context, listen: false);
-                          mySignInBloc.saveCompleteDetailsToFirebase(
-                              myController.currentUser.value!);
-                        })),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('already have an account?').tr(),
-                    TextButton(
-                      child: Text(
-                        'sign in',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ).tr(),
-                      onPressed: () {
-                        if (widget.tag == null) {
-                          nextScreenReplace(context, SignInPage());
-                        } else {
-                          nextScreenReplace(
-                              context,
-                              SignInPage(
-                                tag: 'Popup',
-                              ));
-                        }
-                      },
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                PrivacyInfo()
-              ],
+              ),
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool? cannotGetDetails;
+
+  getUploadRow(context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        cannotGetDetails == null
+            ? Container()
+            : cannotGetDetails == true
+                ? Text(
+                    "Re-try uploading CNIC",
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  )
+                : Text(""),
+        _cnicModel.cnicNumber.isNotEmpty
+            ? Text(
+                "CNIC Details",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Upload CNIC"),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await scanCnic(ImageSource.camera);
+                            setState(() {
+                              if (_cnicModel.cnicNumber.isEmpty) {
+                                cannotGetDetails = true;
+                              } else {
+                                cannotGetDetails = false;
+                              }
+                              isLoading = false;
+                            });
+                          },
+                          icon: Icon(Icons.camera)),
+                      Gap(12),
+                      IconButton(
+                          onPressed: () async {
+                            await scanCnic(ImageSource.gallery);
+                          },
+                          icon: Icon(Icons.folder)),
+                    ],
+                  ),
+                ],
+              ),
+        _cnicModel.cnicNumber.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("CNIC: ${_cnicModel.cnicNumber}"),
+                  Text("DOB: ${_cnicModel.cnicHolderDateOfBirth}"),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Issue Date: ${_cnicModel.cnicIssueDate}"),
+                      Text("Expiry Date: ${_cnicModel.cnicExpiryDate}"),
+                    ],
+                  ),
+                ],
+              )
+            : Container(),
+        _cnicModel.cnicNumber.isNotEmpty
+            ? Text(
+                "Note: Your details must be accurate or retry uploading image",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ).tr()
+            : Container()
+      ],
+    );
   }
 }

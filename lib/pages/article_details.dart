@@ -1,24 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:nofence/blocs/ads_bloc.dart';
-import 'package:nofence/blocs/bookmark_bloc.dart';
-import 'package:nofence/blocs/sign_in_bloc.dart';
-import 'package:nofence/blocs/theme_bloc.dart';
-import 'package:nofence/models/article.dart';
-import 'package:nofence/models/custom_color.dart';
-import 'package:nofence/pages/comments.dart';
-import 'package:nofence/services/app_service.dart';
-import 'package:nofence/utils/cached_image.dart';
-import 'package:nofence/utils/sign_in_dialog.dart';
-import 'package:nofence/widgets/banner_ad_admob.dart';     //admob
-//import 'package:nofence/widgets/banner_ad_fb.dart';      //fb ad
-import 'package:nofence/widgets/bookmark_icon.dart';
-import 'package:nofence/widgets/html_body.dart';
-import 'package:nofence/widgets/love_count.dart';
-import 'package:nofence/widgets/love_icon.dart';
-import 'package:nofence/widgets/related_articles.dart';
-import 'package:nofence/widgets/views_count.dart';
+import 'package:crimebook/blocs/ads_bloc.dart';
+import 'package:crimebook/blocs/bookmark_bloc.dart';
+import 'package:crimebook/blocs/sign_in_bloc.dart';
+import 'package:crimebook/blocs/theme_bloc.dart';
+import 'package:crimebook/models/article.dart';
+import 'package:crimebook/models/custom_color.dart';
+import 'package:crimebook/pages/comments.dart';
+import 'package:crimebook/services/app_service.dart';
+import 'package:crimebook/utils/cached_image.dart';
+import 'package:crimebook/utils/sign_in_dialog.dart';
+import 'package:crimebook/widgets/banner_ad_admob.dart';     //admob
+//import 'package:crimebook/widgets/banner_ad_fb.dart';      //fb ad
+import 'package:crimebook/widgets/bookmark_icon.dart';
+import 'package:crimebook/widgets/html_body.dart';
+import 'package:crimebook/widgets/love_count.dart';
+import 'package:crimebook/widgets/love_icon.dart';
+import 'package:crimebook/widgets/related_articles.dart';
+import 'package:crimebook/widgets/views_count.dart';
 import 'package:share/share.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';

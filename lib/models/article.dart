@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nofence/services/app_service.dart';
+import 'package:crimebook/services/app_service.dart';
 
 class Article {
 

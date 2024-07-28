@@ -8,7 +8,7 @@ class AppName extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        text: 'News',   //first part
+        text: 'crime',   //first part
         style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: fontSize,
@@ -16,9 +16,9 @@ class AppName extends StatelessWidget {
             color: Colors.grey[800]),
         children: <TextSpan>[
           TextSpan(
-              text: 'Hour',  //second part
+              text: 'book',  //second part
               style:
-                  TextStyle(fontFamily: 'Poppins', color: Colors.orangeAccent)),
+                  TextStyle(fontFamily: 'Poppins', color: Colors.orange)),
         ],
       ),
     );
