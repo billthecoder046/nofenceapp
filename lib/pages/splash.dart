@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:crimebook/config/config.dart';
 import 'package:crimebook/pages/welcome.dart';
+import 'package:get/get.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:provider/provider.dart';
+import '../blocs/getxLogics/user_logic.dart';
 import '../blocs/sign_in_bloc.dart';
 import '../utils/next_screen.dart';
 import 'home.dart';
@@ -14,8 +17,9 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
-  
+  initializeControllers() async{
+    await Get.put(UserLogic());
+  }
   afterSplash(){
     final SignInBloc sb = context.read<SignInBloc>();
     Future.delayed(Duration(milliseconds: 1500)).then((value){
@@ -25,8 +29,6 @@ class _SplashPageState extends State<SplashPage> {
       
     });
   }
-
-
   gotoHomePage () {
     final SignInBloc sb = context.read<SignInBloc>();
     if(sb.isSignedIn == true){ 
@@ -34,24 +36,15 @@ class _SplashPageState extends State<SplashPage> {
     }
     nextScreenReplace(context, HomePage());
   }
-
-
-
-
   gotoSignInPage (){
     nextScreenReplace(context, WelcomePage());
   }
-
   @override
   void initState() {
     afterSplash();
+    initializeControllers();
     super.initState();
   }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {

@@ -38,7 +38,7 @@ class _AllIssuesState extends State<AllIssues> {
                 SizedBox(
                   width: 6,
                 ),
-                Text('All Issues',
+                Text('Recent Crimes in your Area',
                     style: TextStyle(
                         fontSize: 18,
                         letterSpacing: -0.6,

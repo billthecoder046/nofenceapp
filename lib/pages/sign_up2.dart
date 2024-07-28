@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cnic_scanner/cnic_scanner.dart';
 import 'package:cnic_scanner/model/cnic_model.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:crimebook/blocs/sign_in_bloc.dart';
 import 'package:crimebook/pages/done.dart';
 import 'package:crimebook/utils/toast.dart';
@@ -47,7 +48,6 @@ class _SignUpPage2State extends State<SignUpPage2> {
   bool isSavingCriminal = false;
   bool isImageUploaded = false;
   bool isCnicUploaded = false;
-  bool isPhoneAuthenticated = false;
   final _phoneNumberController = TextEditingController();
   final _cnicController = TextEditingController();
   final _dobController = TextEditingController();
@@ -174,27 +174,26 @@ class _SignUpPage2State extends State<SignUpPage2> {
 
   // Save User Details to Firestore
   bool allChecksPassed() {
-    if (isPhoneAuthenticated == false) {
-      openToast(context, 'Must verify phone number');
-    } else if (_cnicModel.cnicNumber.isEmpty) {
+     if (_cnicModel.cnicNumber.isEmpty) {
       openToast(context, 'Try uploading cnic again');
+      return false;
     } else if (selectedUserType == null) {
       openToast(context, 'Please select User type');
+      return false;
     } else {
       return true;
     }
-    return false;
   }
 
-  Future<void> _saveUserDetails() async {
+  Future<bool> _saveUserDetails() async {
+
     var sb = Provider.of<SignInBloc>(context, listen: false);
     var uC = Get.find<UserLogic>();
     DateFormat formatter = DateFormat('dd/MM/yyyy');
 
-    if (_saveUserDetails() == false) {
-      return;
+    if (allChecksPassed() == false) {
+      return false;
     }
-
     var newUser = MyUser(
       uid: FirebaseAuth.instance.currentUser!.uid,
       name: uC.currentUser.value!.name ??
@@ -206,9 +205,9 @@ class _SignUpPage2State extends State<SignUpPage2> {
       cnicDob: formatter.parse(_cnicModel.cnicHolderDateOfBirth),
       cnicExpiryDate: formatter.parse(_cnicModel.cnicExpiryDate),
       cnicIssueDate: formatter.parse(_cnicModel.cnicIssueDate),
-      phoneNumber: _phoneNumberController.text,
+      phoneNumber: phoneNumber,
       profilePicUrl: profilePicUrl,
-      gender: selectedUserGender!.name == UserGender.female
+      gender: selectedUserGender != null && selectedUserGender!.name == UserGender.female
           ? UserGender.female
           : UserGender.male,
       userType: selectedUserType,
@@ -220,23 +219,24 @@ class _SignUpPage2State extends State<SignUpPage2> {
       await FirebaseFirestore.instance
           .collection(FirebaseConfig.usersCollection)
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set(uC.currentUser.value!.toJSON())
+          .update(uC.currentUser.value!.toJSON())
           .then((value) {
-        sb.getTimestamp().then((value) => sb
-            .saveToFirebase()
+        sb.getTimestamp()
             .then((value) => sb.increaseUserCount())
             .then((value) => sb.guestSignout().then(
                 (value) => sb.saveDataToSP().then((value) => sb.setSignIn().then((value) {
                       setState(() {
                         signUpCompleted = true;
                       });
-                      afterSignUp();
-                    })))));
+                      // afterSignUp();
+                    }))));
       });
+      return true;
 
       // ... (Navigate to the next screen or handle success) ...
     } catch (e) {
       print('Error saving user details: $e');
+      return false;
     }
   }
 
@@ -286,12 +286,18 @@ class _SignUpPage2State extends State<SignUpPage2> {
     _phoneNumberController.dispose();
     super.dispose();
   }
+  String? myCountryCode;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Complete Your Profile'),
+        title: const Text('Complete Your Profile First'),
+        actions: [IconButton(onPressed: (){
+          setState(() {
+            signUpStarted =false;
+          });
+        }, icon: Icon(Icons.add))],
       ),
       body: Center(
         child: Column(
@@ -318,31 +324,63 @@ class _SignUpPage2State extends State<SignUpPage2> {
                         SizedBox(height: 16.0),
 
                         // Phone Number
-                        TextFormField(
-                          controller: _phoneNumberController,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            hintText: 'Enter your Phone Number',
-                            suffixIcon: TextButton(
-                              child: Text(
-                                "Verify",
-                                style: TextStyle(
-                                    color: Colors.blue, fontWeight: FontWeight.bold),
+
+                       SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            controller: _phoneNumberController,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              prefix: CountryCodePicker(
+                                onChanged: (value){
+                                  myCountryCode = value.dialCode;
+                                  print("My Country Code ${myCountryCode}");
+                                },
+                                // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                                initialSelection: 'IT',
+                                favorite: ['+92','PK'],
+                                // optional. Shows only country name and flag
+                                showCountryOnly: false,
+                                // optional. Shows only country name and flag when popup is closed.
+                                showOnlyCountryWhenClosed: false,
+                                // optional. aligns the flag and the Text left
+                                alignLeft: false,
                               ),
-                              onPressed: () {
-                                // Clear the text field
-                                nextScreen(context,
-                                    PhoneAuthPage(number: _phoneNumberController.text));
-                              },
+                              labelText: 'Phone Number',
+                              hintText: 'eg. 3058431046',
+                              // suffixIcon: TextButton(
+                              //   child: Text(
+                              //     "Verify",
+                              //     style: TextStyle(
+                              //         color: Colors.blue, fontWeight: FontWeight.bold),
+                              //   ),
+                              //   onPressed: () async{
+                              //     String? phoneNumber = _phoneNumberController.text;
+                              //     if(phoneNumber.startsWith("0")) {
+                              //       phoneNumber = phoneNumber.substring(1);
+                              //     }
+                              //     phoneNumber = "$myCountryCode$phoneNumber";
+                              //     print("My phone Number is $phoneNumber");
+                              //     if(phoneNumber.isNotEmpty){
+                              //       bool value = await nextScreenPhoneAuth(context,
+                              //           PhoneAuthPage(number: phoneNumber));
+                              //       if(value){
+                              //         isPhoneAuthenticated = true;
+                              //       }
+                              //     }
+                              //     // Clear the text field
+                              //
+                              //
+                              //   },
+                              // ),
                             ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your phone number';
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
-                          },
                         ),
                         SizedBox(height: 16.0),
 
@@ -405,22 +443,30 @@ class _SignUpPage2State extends State<SignUpPage2> {
 
                         Center(
                           child: myFirstButton2(
-                            onPressed: () {
+                            onPressed: () async{
                               setState(() {
                                 setState(() {
                                   signUpStarted = true;
                                 });
                               });
-                              if (_formKey.currentState!.validate() &&
-                                  cnicUrl != null &&
-                                  profilePicUrl != null) {
-                                _formKey.currentState!.save();
-                                _saveUserDetails();
+                              if (_formKey.currentState!.validate()) {
+                                print("0");
+
+                                // _formKey.currentState!.save();
+                                bool value = await _saveUserDetails();
+
+                                if(value == true){
+                                  Navigator.of(context).pop(true);
+                                }else{
+                                  Navigator.of(context).pop(false);
+                                }
+                              }else{
+                                print("1");
                               }
                             },
                             text: signUpStarted == false
                                 ? Text(
-                                    'sign up',
+                                    'Complete Profile',
                                     style: TextStyle(fontSize: 16, color: Colors.white),
                                   ).tr()
                                 : signUpCompleted == false

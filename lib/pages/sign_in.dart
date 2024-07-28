@@ -78,7 +78,6 @@ class _SignInPageState extends State<SignInPage> {
           });
           sb.signInwithEmailPassword(email, pass).then((_)async{
             if(sb.hasError == false){
-              
               sb.getUserDatafromFirebase(sb.uid)
               .then((value) => sb.guestSignout())
               .then((value) => sb.saveDataToSP()

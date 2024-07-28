@@ -30,7 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
   var passCtrl = TextEditingController();
   var nameCtrl = TextEditingController();
   var formKey = GlobalKey<FormState>();
-  
+
   late String email;
   late String pass;
   String? name;
@@ -42,7 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         offsecureText = false;
         lockIcon = LockIcon().open;
-        
+
       });
     } else {
       setState(() {
@@ -68,7 +68,27 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             signUpStarted = true;
           });
-          sb.signUpwithEmailPassword(context, name, email, pass);
+          sb.signUpwithEmailPassword(context,name, email, pass).then((_)async{
+            if(sb.hasError == false){
+              sb.getTimestamp()
+                  .then((value) => sb.saveToFirebase()
+                  .then((value) => sb.increaseUserCount())
+                  .then((value) => sb.guestSignout()
+                  .then((value) => sb.saveDataToSP()
+                  .then((value) => sb.setSignIn()
+                  .then((value){
+                setState(() {
+                  signUpCompleted = true;
+                });
+                afterSignUp();
+              })))));
+            } else{
+              setState(() {
+                signUpStarted = false;
+              });
+              openSnacbar(context, sb.errorCode);
+            }
+          });
         }
       });
     }
@@ -80,11 +100,11 @@ class _SignUpPageState extends State<SignUpPage> {
     }else{
       Navigator.pop(context);
     }
-    
+
   }
 
-  
-    
+
+
 
 
   @override
@@ -97,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 0),
             child: ListView(
               children: <Widget>[
-                
+
                 SizedBox(height: 20,),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -105,7 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: IconButton(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.all(0),
-                    icon: Icon(Icons.keyboard_backspace), 
+                    icon: Icon(Icons.keyboard_backspace),
                     onPressed: (){
                       Navigator.pop(context);
                     }),
@@ -119,8 +139,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   height: 60,
                 ),
-                
-                
+
+
                 TextFormField(
                   controller: nameCtrl,
                   keyboardType: TextInputType.text,
@@ -142,13 +162,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
                 SizedBox(height: 20,),
 
-                
+
                 TextFormField(
                   decoration: InputDecoration(
                     hintText: 'username@mail.com',
                     labelText: 'Email Address',
-                  
-                    
+
+
                   ),
                   controller: emailCtrl,
                   keyboardType: TextInputType.emailAddress,
@@ -163,7 +183,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   },
                 ),
                 SizedBox(height: 20,),
-                
+
                 TextFormField(
                   controller: passCtrl,
                   obscureText: offsecureText,
@@ -173,10 +193,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     suffixIcon: IconButton(icon: lockIcon, onPressed: (){
                       lockPressed();
                     }),
-                    
-                    
+
+
                   ),
-                 
+
 
                   validator: (String? value){
                     if (value!.length == 0) return "Password can't be empty";
@@ -189,9 +209,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   },
                 ),
 
-                
+
                 SizedBox(height: 50,),
-                
+
                 Container(
                   height: 45,
                   width: double.infinity,
@@ -223,25 +243,25 @@ class _SignUpPageState extends State<SignUpPage> {
                         }else{
                           nextScreenReplace(context, SignInPage(tag: 'Popup',));
                         }
-                        
+
                       },
                     )
                   ],
                 ),
                 SizedBox(height: 50,),
                 PrivacyInfo()
-                
-                
 
-                
 
-                
-                
+
+
+
+
+
               ],
             ),
           ),
         )
-      
+
     );
   }
 

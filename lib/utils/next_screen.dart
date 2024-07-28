@@ -1,3 +1,4 @@
+import 'package:crimebook/pages/phoneAuthScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:crimebook/models/article.dart';
@@ -11,6 +12,17 @@ import '../pages/post_notification_details.dart';
 void nextScreen (context, page){
   Navigator.push(context, MaterialPageRoute(
     builder: (context) => page));
+}
+Future<bool> nextScreenSignUp2 (context, page) async{
+  bool value = await Navigator.push(context, MaterialPageRoute(
+      builder: (context) => page));
+  return value;
+}
+
+Future<bool> nextScreenPhoneAuth (context, page) async{
+  bool value =await Navigator.push(context, MaterialPageRoute(
+      builder: (context) => page));
+  return value;
 }
 
 
