@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -8,9 +9,11 @@ import 'package:crimebook/pages/explore.dart';
 import 'package:crimebook/pages/profile.dart';
 import 'package:crimebook/pages/videos.dart';
 import 'package:crimebook/services/notification_service.dart';
+import 'package:get/get.dart' hide Trans;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import '../blocs/getxLogics/user_logic.dart';
 import 'all_crime_screens/crime.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,8 +35,6 @@ class _HomePageState extends State<HomePage> {
     Feather.user,
     Feather.user
   ];
-
-
   void onTabTapped(int index) {
     setState(() {
      _currentIndex = index;
@@ -57,6 +58,7 @@ class _HomePageState extends State<HomePage> {
         }
       });
     });
+
   }
 
 

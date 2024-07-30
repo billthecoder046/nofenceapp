@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crimebook/blocs/getxLogics/user_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:crimebook/blocs/sign_in_bloc.dart';
 import 'package:crimebook/pages/profile.dart';
 import 'package:crimebook/utils/next_screen.dart';
+import 'package:get/get.dart' hide Trans;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -15,6 +17,7 @@ class JusticePostIssue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sb = context.watch<SignInBloc>();
+    final uC = Get.find<UserLogic>();
     return Container(
       padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
       height: 65,
@@ -30,7 +33,7 @@ class JusticePostIssue extends StatelessWidget {
             backgroundColor: Colors.grey[400],
             backgroundImage: sb.guestUser
               ? CachedNetworkImageProvider(sb.defaultUserImageUrl)
-              : CachedNetworkImageProvider(sb.imageUrl!)
+              : CachedNetworkImageProvider(uC.currentUser.value!.profilePicUrl.toString())
           ),
           onTap: (){
             nextScreen(context, ProfilePage());

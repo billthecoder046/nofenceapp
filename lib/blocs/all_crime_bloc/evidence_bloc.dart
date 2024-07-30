@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:crimebook/models/all_crime_models/evidence.dart';
 import 'package:crimebook/config/firebase_config.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../models/all_crime_models/crime.dart';
 import 'ciminal_bloc.dart'; // Import FirebaseConfig
@@ -262,4 +264,6 @@ class EvidenceBloc extends ChangeNotifier {
   Evidence? findEvidenceByURL(String url) {
     return evidence.firstWhere((evi) => evi.urls!.contains(url), orElse: () => Evidence());
   }
+
+  List<Evidence> allEvidenceToCrime = [];
 }

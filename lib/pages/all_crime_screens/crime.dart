@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../notifications.dart';
+import 'deletAllData.dart';
 
 class Crime extends StatefulWidget {
   Crime({Key? key}) : super(key: key);
@@ -29,63 +30,26 @@ class _CrimeState extends State<Crime>
   TabController? _tabController;
 
 
-  List<Tab> _tabs = [
-    Tab(
-      text: "crime".tr(),
-    ),
-    Tab(
-      text: CrimeType.Murders.name,
-    ),
-    Tab(
-          text: CrimeType.Theft.name,
-    ),
-    Tab(
-      text: CrimeType.Robbery.name,
-    ),
-    Tab(
-      text: CrimeType.Violence.name,
-    ),
-    // Tab(
-    //   text: CrimeType.Fraud.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.Destruction.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.Accident.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.FireRaising.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.Kidnapping.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.SexualAssault.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.DrugTrafficking.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.DomesticViolence.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.Harassment.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.cybercrime.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.moneyLaundering.name,
-    // ),
-    // Tab(
-    //   text: CrimeType.other.name,
-    // ),
-  ];
+  List<Widget> _tabs = [];
+  getMyTabes(){
+    _tabs.add(
+     Tab(
+       text: "All Crimes".tr(),
+     ),
+   );
+    for (var status in CrimeType.values) {
+       _tabs.add(
+         Tab(
+           text: status.name.tr(),
+         ),
+       );
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    getMyTabes();
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController!.addListener(() {
       context.read<TabIndexBloc>().setTabIndex(_tabController!.index);
@@ -130,6 +94,7 @@ class _CrimeState extends State<Crime>
             ),
             elevation: 1,
             actions: <Widget>[
+              DeleteAllDataButton(),
               IconButton(
                 icon: Icon(
                   AntDesign.search1,

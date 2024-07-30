@@ -313,6 +313,15 @@ class SignInBloc extends ChangeNotifier {
     _imageUrl = sp.getString('image_url');
     _uid = sp.getString('uid');
     _signInProvider = sp.getString('sign_in_provider');
+    print('gettinng id');
+    var uC = Get.find<UserLogic>();
+    MyUser newUser = MyUser(
+      uid: _uid,
+      name: _name,
+      email: _email,
+    );
+    uC.currentUser.value = newUser;
+    print('hayy ${uC.currentUser.value!.uid}');
     notifyListeners();
   }
 

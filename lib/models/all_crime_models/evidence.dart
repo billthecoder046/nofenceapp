@@ -5,7 +5,7 @@ enum EvidenceType {
   video, // Video recording
   audio, // Audio recording
   document, // Document (PDF, Word, etc.)
-  other, unknown, // Other type of evidence
+  // other, unknown, // Other type of evidence
 }
 
 class Evidence {

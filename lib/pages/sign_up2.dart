@@ -105,36 +105,35 @@ class _SignUpPage2State extends State<SignUpPage2> {
     }
   }
 
-  XFile? pickedProfileImage;
-
   // Function to upload Profile Picture to Firebase Storage
   Future<void> _uploadProfilePicture() async {
     setState(() {
       isLoading = true;
     });
-    try {
-      pickedProfileImage = await _picker.pickImage(source: ImageSource.gallery);
 
-      if (pickedProfileImage != null) {
-        final file = File(pickedProfileImage!.path);
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('users')
-            .child('${FirebaseAuth.instance.currentUser!.uid}')
-            .child('profile')
-            .child('profile.jpg');
-        try {
-          final uploadTask = await storageRef.putFile(file);
-          profilePicUrl = await uploadTask.ref.getDownloadURL();
-          setState(() {});
-          print('Profile Picture URL: $profilePicUrl');
-        } catch (e) {
-          print('Error uploading Profile Picture: $e');
-        }
+    XFile? pickedProfileImage = await _picker.pickImage(source: ImageSource.gallery);
+    var uC = Get.find<UserLogic>();
+    print("my id");
+    print(uC.currentUser.value!.uid);
+
+    if (pickedProfileImage != null) {
+      final file = File(pickedProfileImage.path);
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users')
+          .child('${uC.currentUser.value!.uid}')
+          .child('profile')
+          .child('profile.jpg');
+      try {
+        final uploadTask = await storageRef.putFile(file);
+        profilePicUrl = await uploadTask.ref.getDownloadURL();
+        setState(() {});
+        print('Profile Picture URL: $profilePicUrl');
+      } catch (e) {
+        print('Error uploading Profile Picture: $e');
       }
-    } catch (e) {
-      print('Error picking Profile Picture: $e');
     }
+
     setState(() {
       isLoading = false;
     });
@@ -174,7 +173,7 @@ class _SignUpPage2State extends State<SignUpPage2> {
 
   // Save User Details to Firestore
   bool allChecksPassed() {
-     if (_cnicModel.cnicNumber.isEmpty) {
+    if (_cnicModel.cnicNumber.isEmpty) {
       openToast(context, 'Try uploading cnic again');
       return false;
     } else if (selectedUserType == null) {
@@ -186,7 +185,6 @@ class _SignUpPage2State extends State<SignUpPage2> {
   }
 
   Future<bool> _saveUserDetails() async {
-
     var sb = Provider.of<SignInBloc>(context, listen: false);
     var uC = Get.find<UserLogic>();
     DateFormat formatter = DateFormat('dd/MM/yyyy');
@@ -221,9 +219,9 @@ class _SignUpPage2State extends State<SignUpPage2> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update(uC.currentUser.value!.toJSON())
           .then((value) {
-        sb.getTimestamp()
-            .then((value) => sb.increaseUserCount())
-            .then((value) => sb.guestSignout().then(
+        sb.getTimestamp().then((value) => sb.increaseUserCount()).then((value) => sb
+            .guestSignout()
+            .then(
                 (value) => sb.saveDataToSP().then((value) => sb.setSignIn().then((value) {
                       setState(() {
                         signUpCompleted = true;
@@ -269,6 +267,7 @@ class _SignUpPage2State extends State<SignUpPage2> {
         dobTEController.text = _cnicModel.cnicHolderDateOfBirth;
         doiTEController.text = _cnicModel.cnicIssueDate;
         doeTEController.text = _cnicModel.cnicExpiryDate;
+        print("Cnic model is: ");
         print(_cnicModel.toString());
       });
     }
@@ -286,6 +285,7 @@ class _SignUpPage2State extends State<SignUpPage2> {
     _phoneNumberController.dispose();
     super.dispose();
   }
+
   String? myCountryCode;
 
   @override
@@ -293,11 +293,6 @@ class _SignUpPage2State extends State<SignUpPage2> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Complete Your Profile First'),
-        actions: [IconButton(onPressed: (){
-          setState(() {
-            signUpStarted =false;
-          });
-        }, icon: Icon(Icons.add))],
       ),
       body: Center(
         child: Column(
@@ -325,20 +320,20 @@ class _SignUpPage2State extends State<SignUpPage2> {
 
                         // Phone Number
 
-                       SizedBox(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
                             controller: _phoneNumberController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               prefix: CountryCodePicker(
-                                onChanged: (value){
+                                onChanged: (value) {
                                   myCountryCode = value.dialCode;
                                   print("My Country Code ${myCountryCode}");
                                 },
                                 // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
                                 initialSelection: 'IT',
-                                favorite: ['+92','PK'],
+                                favorite: ['+92', 'PK'],
                                 // optional. Shows only country name and flag
                                 showCountryOnly: false,
                                 // optional. Shows only country name and flag when popup is closed.
@@ -443,24 +438,23 @@ class _SignUpPage2State extends State<SignUpPage2> {
 
                         Center(
                           child: myFirstButton2(
-                            onPressed: () async{
+                            onPressed: () async {
                               setState(() {
-                                setState(() {
-                                  signUpStarted = true;
-                                });
+                                signUpStarted = true;
                               });
+
                               if (_formKey.currentState!.validate()) {
                                 print("0");
 
                                 // _formKey.currentState!.save();
                                 bool value = await _saveUserDetails();
 
-                                if(value == true){
+                                if (value == true) {
                                   Navigator.of(context).pop(true);
-                                }else{
+                                } else {
                                   Navigator.of(context).pop(false);
                                 }
-                              }else{
+                              } else {
                                 print("1");
                               }
                             },
@@ -471,9 +465,9 @@ class _SignUpPage2State extends State<SignUpPage2> {
                                   ).tr()
                                 : signUpCompleted == false
                                     ? SizedBox(
-                                width: 32.0,
-                                height: 32.0,
-                                child: new CupertinoActivityIndicator())
+                                        width: 32.0,
+                                        height: 32.0,
+                                        child: new CupertinoActivityIndicator())
                                     : Text('sign up successful!',
                                             style: TextStyle(
                                                 fontSize: 16, color: Colors.white))
@@ -528,22 +522,16 @@ class _SignUpPage2State extends State<SignUpPage2> {
                               isLoading = true;
                             });
                             await scanCnic(ImageSource.camera);
+                            if (_cnicModel.cnicNumber.isEmpty) {
+                              cannotGetDetails = true;
+                            } else {
+                              cannotGetDetails = false;
+                            }
                             setState(() {
-                              if (_cnicModel.cnicNumber.isEmpty) {
-                                cannotGetDetails = true;
-                              } else {
-                                cannotGetDetails = false;
-                              }
                               isLoading = false;
                             });
                           },
                           icon: Icon(Icons.camera)),
-                      Gap(12),
-                      IconButton(
-                          onPressed: () async {
-                            await scanCnic(ImageSource.gallery);
-                          },
-                          icon: Icon(Icons.folder)),
                     ],
                   ),
                 ],

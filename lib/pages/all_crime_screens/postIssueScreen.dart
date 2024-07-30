@@ -19,6 +19,7 @@ import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart'; // Import image_picker  Import multi_image_picker
 import 'package:speech_to_text/speech_to_text.dart';
 import '../../blocs/all_crime_bloc/ciminal_bloc.dart';
+import '../../blocs/all_crime_bloc/commonWidgets/showWidgets.dart';
 import '../../blocs/all_crime_bloc/crime_bloc.dart';
 import '../../blocs/all_crime_bloc/crime_feedback_bloc.dart';
 import '../../blocs/all_crime_bloc/evidence_bloc.dart';
@@ -34,8 +35,13 @@ import '../../models/all_crime_models/evidence.dart';
 import '../../models/all_crime_models/judgeRemark.dart';
 import '../../models/all_crime_models/witness.dart';
 import '../../utils/buttons.dart';
-import '../../utils/next_screen.dart'; // Import GeoFirestore
+import '../../utils/next_screen.dart';
+import '../getEvidenceDetails.dart'; // Import GeoFirestore
 
+enum WitnessType {
+  yes, // Anonymous witness
+  no, // Identified witness
+}
 class CrimeFormScreen extends StatefulWidget {
   const CrimeFormScreen({Key? key}) : super(key: key);
 
@@ -45,13 +51,12 @@ class CrimeFormScreen extends StatefulWidget {
 
 class _CrimeFormScreenState extends State<CrimeFormScreen> {
   var _locationController = TextEditingController();
-
+  Crime newCrime = Crime();
   LatLng? _selectedLocation;
   bool _isLoadingJudges = true;
   List<Judge> availableJudges = [];
   List<String> criminalIds = [];
   List<String> evidenceMediaUrls = [];
-  var newCrime = Crime();
   WitnessType? _selectedWitnessType = WitnessType.yes;
 
   bool isFormValidated = true;
@@ -128,11 +133,15 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
 
   // Function to create a new criminal
 
+  late String crimeId;
   @override
   void initState() {
     super.initState();
+    var uid = Uuid();
+    crimeId = uid.v1();
     _fetchAvailableJudges(context);
-
+    final locationBloc = Provider.of<LocationBloc>(context, listen: false);
+    getLocationNow(context, locationBloc);
     _speechToText = SpeechToText();
   }
 
@@ -162,6 +171,11 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                 ?.didChange(result.recognizedWords); // Use didChange
           });
         },
+
+        listenOptions: SpeechListenOptions(
+          cancelOnError: true,
+        ),
+
         listenFor: null); // Listen indefinitely
   }
 
@@ -172,13 +186,13 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
     _speechToText.stop();
   }
 
-  Future<Crime> saveCrime() async {
+  Future<Crime> saveCrime(context, locationBloc) async {
+
     if (_formKeyCrime.currentState!.validate() && _selectedLocation != null) {
       final formData = _formKeyCrime.currentState!.value;
-      var uid = Uuid();
-      String crimeId = uid.v1();
 
-      newCrime = Crime(
+
+        newCrime = Crime(
         id: crimeId,
         crimeCategory: formData['crimeCategory'],
         // Use the 'location' field for GeoFirestore
@@ -192,7 +206,10 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
         userDescription: formData['description'],
         userTitle: formData['title'],
         assignedJudgeId: formData['assignedJudgeId'] ?? '',
-        criminalIds: formData['criminalIds'] ?? [],
+        criminalIds: formData['criminalIds'] ?? [], 
+        crimeStatus: CrimeStatus.open,
+          hideUserIdentity: _selectedWitnessType!.name.toLowerCase() =='yes'?true:false,
+
       );
       // Calculate Geohash
       var myGeoPoint = geoHash.GeoHash.encode(
@@ -214,6 +231,28 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
     }
     return newCrime;
   }
+  getLocationNow(context, locationBloc) async{
+    await getCurrentLocation(context, locationBloc);
+  }
+  getCurrentLocation(context,locationBloc) async{
+    setState(() {
+      isGettingLocation = true;
+    });
+    Map<String, dynamic> location = await locationBloc
+        .getCurrentLocation(context);
+    print(location['controller'].runtimeType);
+    print(location['loc'].runtimeType);
+    _selectedLocation = location['loc'];
+    _locationController = location['controller'];
+    if (_formKeyCrime.currentState != null) {
+      _formKeyCrime.currentState?.fields['location']?.didChange( _locationController.text);
+      _formKeyCrime.currentState?.save();
+    }
+    openToast(context, "Crime location is accessed");
+    setState(() {
+      isGettingLocation = false;
+    });
+  }
 
   showAnimatedText(context) {
     return SizedBox(width: 32.0, height: 32.0, child: new CupertinoActivityIndicator());
@@ -225,15 +264,22 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Add Details of Crime',
-              style: TextStyle(
-                  fontSize: 18,
-                  color: Theme.of(context).secondaryHeaderColor,
-                  fontWeight: FontWeight.bold),
-            ).tr(),
+            padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Add Details of Crime',
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).secondaryHeaderColor,
+                      fontWeight: FontWeight.bold),
+                ).tr(),
+                myLogo(50.0,50.0),
+              ],
+            ),
           ),
           Card(
             elevation: 8.0,
@@ -307,6 +353,9 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                             labelText: 'Location',
                           ),
                           readOnly: false,
+                          validator: FormBuilderValidators.required(
+                            errorText: 'Please enter or get current location',
+                          ),
                         ),
                         const SizedBox(height: 16.0),
 
@@ -318,52 +367,12 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  myFirstButton(
-                                      text: const Text('Get Current Location'),
-                                      onPressed: () async {
-                                        setState(() {
-                                          isGettingLocation = true;
-                                        });
-                                        Map<String, dynamic> location = await locationBloc
-                                            .getCurrentLocation(context);
-                                        print(location['controller'].runtimeType);
-                                        print(location['loc'].runtimeType);
-                                        _selectedLocation = location['loc'];
-                                        _locationController = location['controller'];
-                                        setState(() {
-                                          isGettingLocation = false;
-                                        });
-                                      }),
-                                  myFirstButton(
-                                      text: const Text('Add Criminal'),
-                                      onPressed: () async {
-                                        try {
-                                          setState(() {
-                                            isGettingLocation = true;
-                                          });
-                                          String? criminalId =
-                                              await nextScreenCriminalDetails(
-                                                  context, CriminalDetails());
-                                          if (criminalId != null) {
-                                            print("idrees doc id is: ${criminalId}");
-                                            openToast(context,
-                                                'Criminal is added successfully');
-                                            criminalIds.add(criminalId);
-                                          } else {
-                                            print("Criminal Id is null");
-                                          }
+                                  // myFirstButton(
+                                  //     text: const Text('Get Current Location').tr(),
+                                  //     onPressed: () async {
+                                  //      await getCurrentLocation(context,locationBloc);
+                                  //     }),
 
-                                          setState(() {
-                                            isGettingLocation = false;
-                                          });
-                                        } on Exception catch (e) {
-                                          print(e.toString());
-                                          setState(() {
-                                            isGettingLocation = false;
-                                          });
-                                          // TODO
-                                        }
-                                      }),
                                 ],
                               ),
 
@@ -420,10 +429,8 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                                           height: 60,
                                           width: 60,
                                           child: Icon(Icons.close,
-                                              size: _isListening ? 28 : 24,
-                                              color: _isListening
-                                                  ? Colors.blue
-                                                  : Colors.black87)),
+                                              size:  24,
+                                              color:  Colors.black87)),
                                       onTap: () {
                                         _formKeyCrime.currentState?.fields['description']
                                             ?.reset();
@@ -442,32 +449,85 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                             children: [
                               Icon(Icons.smart_toy_outlined),
                               Gap(8),
-                              const Text('Rewrite Description using AI').tr(),
+                              const Text('Rewrite description in English').tr(),
                             ],
                           ),
                         ),
-                        Gap(14),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            myFirstButton(
+                              onPressed: () async{
+                                bool? value = await nextScreenWithReturnValue(context, EvidenceFormScreen(crimeId: crimeId,));
+                                if(value !=null && value == true){
+                                  openToast(context, "Evidence saved ! You can also add more!");
+                                }else{
+                                  openToast(context, "Couldn't save evidence");
+                                }
 
-                        InkWell(
-                          onTap: () {
-                            _selectMedia();
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.insert_page_break,
-                                color: Colors.blue,
-                              ),
-                              Gap(10),
-                              Text(
-                                "${_selectedMedia.isNotEmpty ? 'Evidence Selected' : 'Select Evidence (Images/Videos)'}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, color: Colors.blue),
-                              ),
-                            ],
-                          ),
+                              },
+                              text: Text('Add Evidence').tr(),
+                            ),
+                            myFirstButton(
+                                text: const Text('Add Criminal').tr(),
+                                onPressed: () async {
+                                  try {
+                                    setState(() {
+                                      isGettingLocation = true;
+                                    });
+                                    String? criminalId =
+                                    await nextScreenCriminalDetails(
+                                        context, CriminalDetails());
+                                    if (criminalId != null) {
+                                      print("idrees doc id is: ${criminalId}");
+                                      openToast(context,
+                                          'Criminal is added successfully');
+                                      criminalIds.add(criminalId);
+                                    } else {
+                                      print("Criminal Id is null");
+                                    }
+
+                                    setState(() {
+                                      isGettingLocation = false;
+                                    });
+                                  } on Exception catch (e) {
+                                    print(e.toString());
+                                    setState(() {
+                                      isGettingLocation = false;
+                                    });
+                                    // TODO
+                                  }
+                                }),
+                          ],
                         ),
+
+                        myFirstButton2(
+                          text: const Text('Submit Crime').tr(),
+                          onPressed: () async {
+                            if(_formKeyCrime.currentState!.validate()){
+                              print("Validated");
+                              var uC = Get.find<UserLogic>();
+                              if (uC.currentUser.value!.cnicNo == null)
+                              {
+                                bool userAuth = await nextScreenSignUp2(context, SignUpPage2());
+                                if (userAuth) {
+                                  openToast(context, "User updated successfully");
+                                  await saveCrimeDetailsToFirebase(context, locationBloc);
+                                } else {
+                                  openToast(context, "Couldn't update user");
+                                }
+                              }
+                              else {
+                                await saveCrimeDetailsToFirebase(context, locationBloc);
+                              }
+                            }else{
+                              openToast(context, "Info is missing, please complete form");
+                            }
+
+                          },
+                        ),
+
+
 
                         // Display Selected Media
                         if (_selectedMedia.isNotEmpty)
@@ -525,12 +585,16 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final criminalBloc = Provider.of<CriminalBloc>(context, listen: false);
     final crimeBloc = Provider.of<CrimeBloc>(context, listen: false);
     final locationBloc = Provider.of<LocationBloc>(context, listen: false);
     final justiceBloc = Provider.of<JusticeBloc>(context, listen: false);
+    print("build");
+
     // ... other code ...
 
     return Scaffold(
@@ -573,32 +637,15 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          height: MediaQuery.of(context).size.height * 1.1,
+          height: MediaQuery.of(context).size.height * 1.2,
           child: crimeDetails(context, locationBloc),
         ),
       ),
-      floatingActionButton: myFirstButton2(
-        text: const Text('Submit'),
-        onPressed: () async {
-          var uC = Get.find<UserLogic>();
-          if (uC.currentUser.value!.cnicNo == null) {
-            bool userAuth = await nextScreenSignUp2(context, SignUpPage2());
-            if (userAuth) {
-              openToast(context, "User updated successfully");
-              await saveCrimeDetailsToFirebase();
-            } else {
-              openToast(context, "Couldn't update user");
-            }
-          } else {
-            await saveCrimeDetailsToFirebase();
-          }
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
     );
   }
 
-  Future<void> saveCrimeDetailsToFirebase() async {
+  Future<void> saveCrimeDetailsToFirebase(context, locationBloc) async {
     try {
       setState(() {
         isSavingCrime = true;
@@ -614,7 +661,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
 
       //Rest code
       print("Crime Deetails: ${newCrime.toJSON()}");
-      Crime myCrimeObj = await saveCrime();
+      Crime myCrimeObj = await saveCrime(context, locationBloc);
       print("My crime Obje ${myCrimeObj.toJSON()}");
 
       ///Save evidence
@@ -661,8 +708,8 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       await crimeBloc.createCrime(myCrimeObj).then((_) {
         // Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Crime Report Submitted!'),
+            SnackBar(
+            content: Text('Crime Report Submitted!').tr(),
           ),
         );
       });

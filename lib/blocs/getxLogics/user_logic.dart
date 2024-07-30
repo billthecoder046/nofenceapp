@@ -62,6 +62,8 @@ class UserLogic extends GetxController {
     sp.clear();
   }
 
+
+
   // Get timestamp
   Future getTimestamp() async {
     DateTime now = DateTime.now();
@@ -185,6 +187,19 @@ class UserLogic extends GetxController {
     }
   }
 
+  Future<MyUser?> getUserDetails(String userId) async {
+    try {
+      final DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (snapshot.exists) {
+        return MyUser.fromJSON(snapshot.data() as Map<String, dynamic>);
+      } else {
+        return null; // User document doesn't exist
+      }
+    } catch (e) {
+      print('Error fetching user details: $e');
+      return null; // Error fetching details
+    }
+  }
   // Sign in with email and password
   Future signInwithEmailPassword(String userEmail, String userPassword) async {
     try {

@@ -5,6 +5,7 @@ class Criminal {
   String? name;
   List<String>? imageUrls;// Name of the criminal
   String? nic;
+  String? addedBy;
   String? nickName; // Alias or nickname (optional)
   String? description; // Detailed description of the criminal (optional)
   DateTime? dateOfBirth; // Date of birth (optional)
@@ -19,12 +20,12 @@ class Criminal {
   Criminal({
     this.id,
     this.name,
-
+   this.addedBy,
     this.nic,
     this.nickName,
     this.description,
     this.dateOfBirth,
-    this.gender,
+      this.gender,
     this.nationality,
     this.address,
     this.imageUrls,
@@ -40,6 +41,7 @@ class Criminal {
       'name': name,
       'imageUrls':imageUrls,
       'nic':nic,
+      'addedBy':addedBy,
       'nickName': nickName,
       'description': description,
       'dateOfBirth': dateOfBirth?.millisecondsSinceEpoch,
@@ -59,6 +61,7 @@ class Criminal {
       name: json['name'],
       nic: json['nic'],
       imageUrls: json['imageUrls'],
+      addedBy: json['addedBy'],
       nickName: json['nickName'],
       description: json['description'],
       dateOfBirth: json['dateOfBirth'] != null ? DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth']) : null,

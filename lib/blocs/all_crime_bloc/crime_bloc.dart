@@ -40,6 +40,7 @@ class CrimeBloc extends ChangeNotifier {
       final docRef = FirebaseFirestore.instance.collection(FirebaseConfig.crimesCollection).doc();
       newCrime.id = docRef.id;
       print("doc Ref is: ${docRef.toString()}");
+      print("nadf ${newCrime.toJSON()}");
       await docRef.set(newCrime.toJSON()).then((value) => print("saved succesfully"));
       crimes.add(newCrime);
       notifyListeners();

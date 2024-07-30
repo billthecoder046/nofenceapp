@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,7 +25,7 @@ class LocationBloc extends ChangeNotifier {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Location Permission Required'),
+              title: const Text('Location Permission Required').tr(),
               content: const Text(
                   'This app needs access to your location to report a crime. Please grant permission.'),
               actions: <Widget>[
@@ -32,7 +33,7 @@ class LocationBloc extends ChangeNotifier {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel').tr(),
                 ),
                 TextButton(
                   onPressed: () {
@@ -40,7 +41,7 @@ class LocationBloc extends ChangeNotifier {
                     Geolocator.openAppSettings();
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Settings'),
+                  child: const Text('Settings').tr(),
                 ),
               ],
             );

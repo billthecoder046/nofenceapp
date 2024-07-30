@@ -1,9 +1,6 @@
 import '../../pages/all_crime_screens/crime.dart';
 
-enum WitnessType {
-  yes, // Anonymous witness
-  no, // Identified witness
-}
+
 
 class Witness {
   String? id; // Unique ID for the witness

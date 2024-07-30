@@ -1,12 +1,14 @@
 import 'dart:io';
-
+import 'package:crimebook/blocs/all_crime_bloc/commonWidgets/showWidgets.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart' hide Trans;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -15,6 +17,11 @@ import '../../blocs/all_crime_bloc/ciminal_bloc.dart';
 import '../../utils/buttons.dart';
 import 'criminals.dart';
 
+
+enum GenderType {
+  Male, // Anonymous witness
+  Female, // Identified witness
+}
 class CriminalDetails extends StatefulWidget {
   CriminalDetails({super.key});
 
@@ -24,16 +31,18 @@ class CriminalDetails extends StatefulWidget {
 
 class _CriminalDetailsState extends State<CriminalDetails> {
   final _formKeyCriminal = GlobalKey<FormBuilderState>();
+  var showC = Get.put(ShowWidgets());
 
   // Criminal related state
   final _criminalSearchController = TextEditingController();
   List<Criminal> _filteredCriminals = [];
   bool _isLoadingCriminals = false;
-  List<XFile> _selectedCMedia = [];
+
   List<String> crimeMediaUrls = [];
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
   bool isGettingLocation = false;
+  GenderType? _selectedGenderType;
   bool isSavingCriminal = false;
 
   void _filterCriminals(String query) {
@@ -70,10 +79,12 @@ class _CriminalDetailsState extends State<CriminalDetails> {
       name: formCriminal['name'],
       nic: formCriminal['nic'],
       nickName: formCriminal['nickName'],
+      addedBy: FirebaseAuth.instance.currentUser!.uid,
+      gender: _selectedGenderType!.name
     );
 
     // Upload Images to Firebase Storage
-    for (var mediaCFile in _selectedCMedia) {
+    for (var mediaCFile in showC.selectedCriminalPics!) {
       final file = File(mediaCFile.path);
       final storageRef = FirebaseStorage.instance
           .ref()
@@ -105,7 +116,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
       final List<XFile>? pickedMedia = await _picker.pickMultiImage(imageQuality: 50);
       if (pickedMedia != null && pickedMedia.isNotEmpty) {
         setState(() {
-          _selectedCMedia.addAll(pickedMedia) ;
+          showC.selectedCriminalPics.addAll(pickedMedia) ;
         });
       }
     } catch (e) {
@@ -123,13 +134,15 @@ class _CriminalDetailsState extends State<CriminalDetails> {
       final XFile? pickedMedia = await _picker.pickImage(imageQuality: 50, source: ImageSource.camera);
       if (pickedMedia != null) {
         setState(() {
-          _selectedCMedia.add(pickedMedia);
+          showC.selectedCriminalPics.value = [];
+          showC.selectedCriminalPics.add(pickedMedia);
         });
       }
     } catch (e) {
       print('Error picking media: $e');
     }
   }
+
   // Function to upload media to Firebase Storage
 
   @override
@@ -139,8 +152,10 @@ class _CriminalDetailsState extends State<CriminalDetails> {
     _fetchCriminals(context);
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select or Add Criminal').tr(),
@@ -163,6 +178,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                         fontWeight: FontWeight.bold),
                   ).tr(),
                 ),
+
                 Card(
                   elevation: 8.0,
                   child: Column(
@@ -212,7 +228,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                             SizedBox(
                               height: 150,
                               child: _filteredCriminals.isEmpty
-                                  ? Center(child: Text('No Criminals Found'))
+                                  ? Center(child: Text('No Criminals Found').tr())
                                   : ListView.builder(
                                 itemCount: _filteredCriminals.length,
                                 itemBuilder: (context, index) {
@@ -267,6 +283,8 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                             ),
                         ],
                       ),
+                      SizedBox(height: 10),
+                      selectMedia(context),
                       const SizedBox(height: 16.0),
 
                       isSavingCriminal
@@ -310,50 +328,32 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                                 hintText: 'Enter Criminal nickName',
                               ),
                             ),
-                            SizedBox(height: 10),
-                            selectMedia(context),
-                            SizedBox(height: 10),
-                            if (_selectedCMedia.isNotEmpty)
-                              SizedBox(
-                                height: 150,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    for (var mediaFile in _selectedCMedia)
-                                      Stack(
-                                        alignment: Alignment.bottomLeft,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.only(right: 10),
-                                            height: 150,
-                                            width: 150,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
-                                              child: Image.file(
-                                                File(mediaFile.path),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-
-                                            height: 35,
-                                            width: 35,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              borderRadius: BorderRadius.circular(10)
-                                            ),
-                                            child: IconButton(onPressed: (){
-                                              setState(() {
-                                                _selectedCMedia.remove(mediaFile);
-                                              });
-                                            }, icon: Icon(Icons.delete_forever,color: Colors.white,size: 20,)),
-                                          )
-                                        ],
-                                      ),
-                                  ],
-                                ),
+                            FormBuilderRadioGroup(
+                              name: 'gender',
+                              decoration: InputDecoration(
+                                labelText: 'Select Gender'.tr(),
                               ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedGenderType = value;
+                                });
+                              },
+                              options: GenderType.values
+                                  .map((type) => FormBuilderFieldOption(
+                                value: type,
+                                child: Text(type.name
+                                    .toUpperCase()), // Use tr() for translation
+                              ))
+                                  .toList(),
+                              validator: FormBuilderValidators.required(
+                                errorText: "Must select the gender"
+                              ),
+                            ),
+
+
+                            SizedBox(height: 10),
+                            if (showC.selectedCriminalPics.isNotEmpty)
+                              showC.showImagesHorizontally(context),
                             savingButtons(context)
                           ],
                         ),
@@ -381,11 +381,11 @@ class _CriminalDetailsState extends State<CriminalDetails> {
           children: [
             myFirstButton(
               onPressed: () => _formKeyCriminal.currentState!.reset(),
-              text: Text('Clear'),
+              text: Text('Clear').tr(),
             ),
             myFirstButton(
               onPressed: () => Navigator.of(context).pop(),
-              text: Text('Cancel'),
+              text: Text('Cancel').tr(),
             ),
             myFirstButton(
               onPressed: () async {
@@ -400,7 +400,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                   isSavingCriminal = false;
                 });
               },
-              text: Text('Save'),
+              text: Text('Save').tr(),
             ),
           ],
         )
@@ -415,10 +415,10 @@ class _CriminalDetailsState extends State<CriminalDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("${_selectedCMedia.isNotEmpty ? 'Images Selected'.tr() : 'Select Evidence Images (Optional)'.tr()}"),
-              _selectedCMedia.isNotEmpty?TextButton(child:Text('Delete All' ,style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),), onPressed: (){
+              Text("${showC.selectedCriminalPics.isNotEmpty ? 'Images Selected'.tr() : 'Select Criminal Images (if Any)'.tr()}"),
+              showC.selectedCriminalPics.isNotEmpty?TextButton(child:Text('Delete All'.tr() ,style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),), onPressed: (){
                 setState(() {
-                  _selectedCMedia.clear();
+                  showC.selectedCriminalPics.clear();
                 });
               }, ):Container()
             ],
@@ -435,7 +435,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                 text: Row(
                     children: [
                       Icon(Icons.folder,size: 18,color: Colors.white,),Gap(10),
-                      Text('Gallery')
+                      Text('Gallery'.tr())
                     ]),
 
                 onPressed: () async {
@@ -453,7 +453,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
                 text:  Row(
                     children: [
                       Icon(Icons.camera,size: 18,color: Colors.white,),Gap(10),
-                      Text('Camera')
+                      Text('Camera').tr()
                     ]),
                 onPressed: () async {
                   setState(() {
