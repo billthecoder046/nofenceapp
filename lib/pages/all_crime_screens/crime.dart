@@ -29,7 +29,6 @@ class _CrimeState extends State<Crime>
   var scaffoldKey = GlobalKey<ScaffoldState>();
   TabController? _tabController;
 
-
   List<Widget> _tabs = [];
   getMyTabes(){
     _tabs.add(
@@ -45,7 +44,6 @@ class _CrimeState extends State<Crime>
        );
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -62,13 +60,11 @@ class _CrimeState extends State<Crime>
       // context.read<JusticeBloc>().fetchAllWitnesses();
     });
   }
-
   @override
   void dispose() {
     _tabController!.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -150,7 +146,6 @@ class _CrimeState extends State<Crime>
       )),
     );
   }
-
   @override
   bool get wantKeepAlive => true;
 }

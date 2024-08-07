@@ -80,6 +80,69 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
+      else if(sb.tabIndex == 5){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 6){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 7){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 8){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 9){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 10){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
+      else if(sb.tabIndex == 11){
+        if (!db.isLoadingCrimes)  {
+          if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
+            // print("reached the bottom -t4");
+            // cb4.setLoading(true);
+            // cb4.getData(mounted, Config().initialCategories[3],);
+          }
+        }
+      }
     
   }
 
@@ -89,17 +152,41 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
       children: <Widget>[
         JusticeTab0(),
         JusticeTab1(
-          category: Config().initialCategories[0],
+          category: CrimeType.values[0].name,
         ),
         JusticeTab2(
-          category: Config().initialCategories[1],
+          category: CrimeType.values[1].name,
 
         ),
         JusticeTab3(
-          category: Config().initialCategories[2],
+          category: CrimeType.values[2].name,
         ),
         JusticeTab4(
-          category: Config().initialCategories[3],
+          category: CrimeType.values[3].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[4].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[5].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[6].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[7].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[8].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[9].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[10].name,
+        ),
+        JusticeTab4(
+          category: CrimeType.values[11].name,
         ),
       ],
       controller: widget.tc,

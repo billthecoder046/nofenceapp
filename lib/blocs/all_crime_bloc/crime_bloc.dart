@@ -104,25 +104,27 @@ class CrimeBloc extends ChangeNotifier {
       if (_lastCrimeVisible == null) {
         rawData = await FirebaseFirestore.instance
             .collection(FirebaseConfig.crimesCollection)
-            .orderBy('date', descending: false)
+            .orderBy('postDate', descending: true)
             .limit(4)
             .get();
       } else {
         rawData = await FirebaseFirestore.instance
             .collection(FirebaseConfig.crimesCollection)
-            .orderBy('date', descending: true)
-            .startAfter([_lastCrimeVisible!['date']])
+            .orderBy('postDate', descending: true)
+            .startAfter([_lastCrimeVisible!['postDate']])
             .limit(4)
             .get();
       }
+      print("My raw data length is: ${rawData.toString()}");
 
       if (rawData.docs.length > 0) {
-
+        print("Raw data length is greater than 0");
         _lastCrimeVisible = rawData.docs[rawData.docs.length - 1];
         crimes.addAll(rawData.docs.map((doc) => Crime.fromJSON(doc.data() as Map<String,dynamic>)).toList());
         _isLoadingCrimes = false; // Set loading state to false after fetching
         notifyListeners();
       } else {
+        print("Raw data length is less than 0");
         _isLoadingCrimes = false; // Set loading state to false even if no more data
         print('No more crimes available');
         notifyListeners();
@@ -236,5 +238,7 @@ class CrimeBloc extends ChangeNotifier {
       return [];
     }
   }
+
+  //Posted by User
 
 }

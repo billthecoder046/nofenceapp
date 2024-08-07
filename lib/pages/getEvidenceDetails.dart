@@ -135,8 +135,9 @@ class _EvidenceFormScreenState extends State<EvidenceFormScreen> {
   }
 
   // Function to save the evidence data
-  Future<bool> _saveEvidence() async {
+  Future<String> _saveEvidence() async {
     bool dataSaved = false;
+    late final newEvidence;
     final evidenceBloc = Provider.of<EvidenceBloc>(context, listen: false);
     if (_formKey.currentState!.validate() && pickedMedia != null) {
       print("Description is: ${_formKey.currentState!.fields['description']!.value!}");
@@ -145,7 +146,7 @@ class _EvidenceFormScreenState extends State<EvidenceFormScreen> {
       print(uC.currentUser.value.toString());
 
       // Create the Evidence object
-      final newEvidence = Evidence(
+        newEvidence = Evidence(
         id: Uuid().v1(),
         // Generate a unique ID
         crimeId: widget.crimeId,
@@ -167,9 +168,9 @@ class _EvidenceFormScreenState extends State<EvidenceFormScreen> {
       dataSaved = true;
     }
     if (dataSaved == true) {
-      return true;
+      return newEvidence!.id;
     } else {
-      return false;
+      return 'Empty';
     }
   }
 
@@ -412,15 +413,15 @@ class _EvidenceFormScreenState extends State<EvidenceFormScreen> {
             setState(() {
               isLoading = true;
             });
-            bool value = await _saveEvidence();
+           String value = await _saveEvidence();
             setState(() {
               isLoading = false;
             });
-            if (value == false) {
+            if (value == 'Empty') {
               // Navigator.of(context).pop(false);
               openToast(context, "Something wrong, please try again.");
             } else {
-              Navigator.of(context).pop(true);
+              Navigator.of(context).pop(value);
             }
           }
         },

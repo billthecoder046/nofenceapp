@@ -340,6 +340,14 @@ class SignInBloc extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<MyUser> getUserObjectfromFirebase(uid) async {
+    var myObj = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    MyUser myUser = MyUser.fromJSON(myObj.data()!);
+
+    return myUser;
+  }
+
   Future setSignIn() async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
     sp.setBool('signed_in', true);

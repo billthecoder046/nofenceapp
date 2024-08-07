@@ -12,6 +12,8 @@ enum CrimeStatus {
 
 class Crime {
   String? id; // Optional: To store document ID from Firebase
+  String? postedBy; // Optional: To store document ID from Firebase
+  String? address; // Optional: To store document ID from Firebase
   CrimeType? crimeCategory; // Category of the crime
   Map<String, dynamic>? location = {}; // Location data for GeoFirestore (g: geohash, l: [latitude, longitude])
   DateTime? postDate; // Date and time of the crime
@@ -47,7 +49,9 @@ class Crime {
     this.assignedJudgeId,
     this.feedback,
     this.hideUserIdentity = false,
-    this.criminalIds, // Initialize as an empty list
+    this.criminalIds,
+    this.postedBy,// Initialize as an empty list
+    this.address,
   });
 
   // Function to convert Crime object to JSON
@@ -70,6 +74,8 @@ class Crime {
       'feedback': feedback,
       'criminalIds': criminalIds, // Include the list of criminal IDs
       'hideUserIdentity': hideUserIdentity,
+      'postedBy':postedBy,
+      'address':address
     };
   }
 
@@ -93,6 +99,8 @@ class Crime {
       feedback: json['feedback'],
       criminalIds: (json['criminalIds'] as List?)?.cast<String>(), // Retrieve list of criminal IDs
       hideUserIdentity: json['hideUserIdentity'] ?? true,
+      address: json['address']??'',
+      postedBy: json['postedBy']??null
     );
   }
 }

@@ -228,9 +228,14 @@ class EvidenceBloc extends ChangeNotifier {
   // --- Helper Functions ---
   Future<List<String>> fetchEvidenceImageUrls(Crime crime) async {
     List<String> imageUrls = [];
-  print("Crime evidence(${crime.evidence.toString()}");
-    if (crime.evidence != null) {
+ print("Lets just show the evidence urls");
+ if(crime.evidence != null){
+   crime.evidence!.forEach((e){
+     print(e.toString());
+   });
+ };
 
+    if (crime.evidence != null) {
       for (String evidenceId in crime.evidence!) {
         try {
           final DocumentSnapshot evidenceDoc = await FirebaseFirestore.instance
@@ -240,7 +245,6 @@ class EvidenceBloc extends ChangeNotifier {
           print("MyEvidence bloc is: ${evidenceDoc.data()}");
 
           if (evidenceDoc.exists) {
-            print('o1');
             final evidenceData = Evidence.fromJSON(evidenceDoc.data() as Map<String, dynamic>);
             if (evidenceData.urls != null) {
               imageUrls.addAll(evidenceData.urls!);
@@ -251,7 +255,10 @@ class EvidenceBloc extends ChangeNotifier {
         }
       }
     }
-
+    print("Before Returning ");
+    imageUrls.forEach((e){
+      print(e.toString());
+    });
     return imageUrls;
   }
 

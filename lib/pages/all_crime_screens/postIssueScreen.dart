@@ -56,13 +56,14 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
   bool _isLoadingJudges = true;
   List<Judge> availableJudges = [];
   List<String> criminalIds = [];
-  List<String> evidenceMediaUrls = [];
   WitnessType? _selectedWitnessType = WitnessType.yes;
 
   bool isFormValidated = true;
 
+
   // For image/video selection
   List<XFile> _selectedMedia = [];
+  List<String> evidenceIds = [];
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
   bool isGettingLocation = false;
@@ -202,6 +203,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
         },
         conclusion: '',
         crimeDate: formData['date'],
+            postedBy: FirebaseAuth.instance.currentUser!.uid,
         postDate: DateTime.now(),
         userDescription: formData['description'],
         userTitle: formData['title'],
@@ -209,6 +211,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
         criminalIds: formData['criminalIds'] ?? [], 
         crimeStatus: CrimeStatus.open,
           hideUserIdentity: _selectedWitnessType!.name.toLowerCase() =='yes'?true:false,
+          address: _locationController.text
 
       );
       // Calculate Geohash
@@ -218,7 +221,11 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       newCrime.location!['g'] = myGeoPoint.hash;
 
       // Upload media to Firebase Storage
-      evidenceMediaUrls = await _uploadMediaToStorage(_selectedMedia);
+      if(newCrime.evidence == null){
+        newCrime.evidence = [];
+      }
+      print("My evidence Ids are: ${evidenceIds.toString()}");
+       newCrime.evidence!.addAll(evidenceIds);
 
       print("My list of Crime IDS ");
       criminalIds.forEach((element) {
@@ -267,19 +274,13 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
 
           Padding(
             padding: const EdgeInsets.only(left: 8.0,right: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Add Details of Crime',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).secondaryHeaderColor,
-                      fontWeight: FontWeight.bold),
-                ).tr(),
-                myLogo(50.0,50.0),
-              ],
-            ),
+            child: Text(
+              'Add Details of Crime',
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Theme.of(context).secondaryHeaderColor,
+                  fontWeight: FontWeight.bold),
+            ).tr(),
           ),
           Card(
             elevation: 8.0,
@@ -458,12 +459,12 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
                           children: [
                             myFirstButton(
                               onPressed: () async{
-                                bool? value = await nextScreenWithReturnValue(context, EvidenceFormScreen(crimeId: crimeId,));
-                                if(value !=null && value == true){
+                               String value = await nextScreenWithReturnValue(context, EvidenceFormScreen(crimeId: crimeId,));
+                               print("My value Evidence Id: $value}");
+                                  evidenceIds.add(value);
+                                  print("My value Evidence Id: ${evidenceIds.toString()}");
                                   openToast(context, "Evidence saved ! You can also add more!");
-                                }else{
-                                  openToast(context, "Couldn't save evidence");
-                                }
+
 
                               },
                               text: Text('Add Evidence').tr(),
@@ -664,15 +665,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
       Crime myCrimeObj = await saveCrime(context, locationBloc);
       print("My crime Obje ${myCrimeObj.toJSON()}");
 
-      ///Save evidence
-      String evidenceId = Uuid().v1();
-      Evidence newEvidence = Evidence(
-        id: evidenceId,
-        crimeId: myCrimeObj.id,
-        witnessId: FirebaseAuth.instance.currentUser!.uid,
-        urls: evidenceMediaUrls,
-      );
-      await evidenceBloc.createEvidence(newEvidence);
+
       //Save Witness
       String witnessId = FirebaseAuth.instance.currentUser!.uid;
       Witness newWitness = Witness(
@@ -695,12 +688,7 @@ class _CrimeFormScreenState extends State<CrimeFormScreen> {
         myCrimeObj.witnesses!.add(newWitness.id!);
       }
       myCrimeObj.judgeRemarks = [];
-      if (myCrimeObj.evidence == null) {
-        myCrimeObj.evidence = [];
-        myCrimeObj.evidence!.add(newEvidence.id!);
-      } else {
-        myCrimeObj.evidence!.add(newEvidence.id!);
-      }
+
       var uid = Uuid();
       var crimeFeedbackId = uid.v1();
       myCrimeObj.feedback = crimeFeedbackId;

@@ -19,8 +19,8 @@ Future<bool> nextScreenSignUp2 (context, page) async{
   return value;
 }
 
-Future<bool?> nextScreenWithReturnValue (context, page) async{
-  bool? value =await Navigator.push(context, MaterialPageRoute(
+Future<String> nextScreenWithReturnValue (context, page) async{
+  String value =await Navigator.push(context, MaterialPageRoute(
       builder: (context) => page));
   return value;
 }
