@@ -23,6 +23,7 @@ class CategoryTab1Bloc extends ChangeNotifier{
 
   Future<Null> getData(mounted, String category) async {
     QuerySnapshot rawData;
+    print("My selected Category is: ${category}");
     
     if (_lastVisible == null)
       rawData = await firestore

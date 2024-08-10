@@ -33,27 +33,27 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
 
   void _scrollListener() {
       final db = context.read<CrimeBloc>();
-      final sb = context.read<TabIndexBloc>();
+      final sb = context.read<TabIndexCrimeBloc>();
 
-      if (sb.tabIndex == 0) {
+      if (sb.tabCrimeIndex == 0) {
         if (!db.isLoadingCrimes) {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             print("reached the bottom");
-            // db.setLoading(true);
+             db.setCrimeLoading();
             db.fetchAllCrimes();
           }
         }
       } 
-      else if(sb.tabIndex == 1){
+      else if(sb.tabCrimeIndex == 1){
+        print("My category: ${CrimeType.values[8].name}");
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             print("reached the bottom -t1");
-            // cb1.setLoading(true);
-            // cb1.getData(mounted, Config().initialCategories[0],);
+             db.getCrimesByCategory(CrimeType.values[8].name);
           }
         }
       }
-      else if(sb.tabIndex == 2){
+      else if(sb.tabCrimeIndex == 2){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t2");
@@ -62,7 +62,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 3){
+      else if(sb.tabCrimeIndex == 3){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t3");
@@ -71,7 +71,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 4){
+      else if(sb.tabCrimeIndex == 4){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -80,7 +80,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 5){
+      else if(sb.tabCrimeIndex == 5){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -89,7 +89,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 6){
+      else if(sb.tabCrimeIndex == 6){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -98,7 +98,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 7){
+      else if(sb.tabCrimeIndex == 7){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -107,7 +107,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 8){
+      else if(sb.tabCrimeIndex == 8){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -116,7 +116,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 9){
+      else if(sb.tabCrimeIndex == 9){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -125,7 +125,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 10){
+      else if(sb.tabCrimeIndex == 10){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");
@@ -134,7 +134,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
           }
         }
       }
-      else if(sb.tabIndex == 11){
+      else if(sb.tabCrimeIndex == 11){
         if (!db.isLoadingCrimes)  {
           if (this.widget.sc!.offset >= this.widget.sc!.position.maxScrollExtent && !this.widget.sc!.position.outOfRange) {
             // print("reached the bottom -t4");

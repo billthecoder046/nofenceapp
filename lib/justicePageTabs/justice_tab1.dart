@@ -1,3 +1,4 @@
+import 'package:crimebook/blocs/all_crime_bloc/crime_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -24,8 +25,7 @@ class _JusticeTab1State extends State<JusticeTab1> {
   void initState() {
     super.initState();
     if(this.mounted){
-      context.read<CategoryTab1Bloc>().data.isNotEmpty ? print('data already loaded'):
-      context.read<CategoryTab1Bloc>().getData(mounted, widget.category);
+      context.read<CrimeBloc>().getCrimesByCategory(widget.category);
     }
     
   }
@@ -49,7 +49,7 @@ class _JusticeTab1State extends State<JusticeTab1> {
                 ),
                 EmptyPage(
                     icon: Feather.clipboard,
-                    message: 'No articles found',
+                    message: 'No Crimes found',
                     message1: ''),
               ],
             )

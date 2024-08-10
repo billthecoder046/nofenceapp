@@ -18,3 +18,18 @@ class TabIndexBloc extends ChangeNotifier {
 
 
 }
+class TabIndexCrimeBloc extends ChangeNotifier {
+
+
+
+  int _tabCrimeIndex = 0;
+  int get tabCrimeIndex => _tabCrimeIndex;
+
+
+  setTabIndex (newIndex){
+    _tabCrimeIndex = newIndex;
+    notifyListeners();
+  }
+
+
+}

@@ -8,6 +8,8 @@ import 'package:crimebook/utils/empty.dart';
 import 'package:crimebook/utils/loading_cards.dart';
 import 'package:provider/provider.dart';
 
+import '../blocs/all_crime_bloc/crime_bloc.dart';
+
 class JusticeTab3 extends StatefulWidget {
   final String category;
   JusticeTab3({Key? key, required this.category}) : super(key: key);
@@ -24,10 +26,7 @@ class _JusticeTab3State extends State<JusticeTab3> {
   void initState() {
     super.initState();
     if(this.mounted){
-      
-      context.read<CategoryTab3Bloc>().data.isNotEmpty ? print('data already loaded'):
-      context.read<CategoryTab3Bloc>().getData(mounted, widget.category);
-    
+      context.read<CrimeBloc>().getCrimesByCategory(widget.category);
     }
     
   }
