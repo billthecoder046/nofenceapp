@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 class ShowWidgets extends GetxController {
 
   RxList<XFile> selectedCriminalPics = <XFile>[].obs;
+  RxList<XFile> selectedWitnessPics = <XFile>[].obs;
 
     Widget showImagesHorizontally(context) {
     return SizedBox(

@@ -24,13 +24,15 @@ class EvidenceBloc extends ChangeNotifier {
   // --- Evidence Operations ---
 
   // Create a new evidence record
-  Future<void> createEvidence(Evidence newEvidence) async {
+  Future<String?> createEvidence(Evidence newEvidence) async {
     try {
       final docRef = FirebaseFirestore.instance.collection(FirebaseConfig.evidenceCollection).doc();
       newEvidence.id = docRef.id;
       await docRef.set(newEvidence.toJSON());
       evidence.add(newEvidence);
+
       notifyListeners();
+      return newEvidence.id;
     } catch (e) {
       print('Error creating evidence: $e');
     }

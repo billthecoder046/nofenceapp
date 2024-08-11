@@ -125,4 +125,23 @@ class CrimeFeedbackBloc extends ChangeNotifier {
   CrimeFeedback? findCrimeFeedbackById(String crimeFeedbackId) {
     return crimeFeedbacks.firstWhere((crimeFeedback) => crimeFeedback.crimeId == crimeFeedbackId, orElse: () => CrimeFeedback());
   }
+  Future<CrimeFeedback?> fetchCrimeFeedbackByCrimeId(
+      String crimeId) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection(FirebaseConfig.crimeFeedbackCollection)
+          .where('crimeId', isEqualTo: crimeId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return CrimeFeedback.fromJSON(
+            querySnapshot.docs.first.data());
+      } else {
+        return null; // No crime feedback found
+      }
+    } catch (e) {
+      print('Error fetching crime feedback by crimeId: $e');
+      return null;
+    }
+  }
 }

@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import '../widgets/all_issues.dart';
 
 class JusticeTab0 extends StatefulWidget {
-
-  JusticeTab0({Key? key}) : super(key: key);
+  String? category;
+  JusticeTab0({Key? key,this.category}) : super(key: key);
 
   @override
   _JusticeTab0State createState() => _JusticeTab0State();
@@ -18,10 +18,24 @@ class _JusticeTab0State extends State<JusticeTab0> {
 
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(this.mounted && widget.category != null){
+      context.read<CrimeBloc>().getCrimesByCategory(widget.category!);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: ()async {
-        context.read<CrimeBloc>().fetchAllCrimes(refresh: true);
+        if(widget.category !=null){
+          context.read<CrimeBloc>().getCrimesByCategory(widget.category!, refresh: true);
+        }else{
+          context.read<CrimeBloc>().fetchAllCrimes(refresh: true);
+        }
+
         },
           child: SingleChildScrollView(
             key: PageStorageKey('key0'),

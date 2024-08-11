@@ -55,6 +55,8 @@ Future<String?> nextScreenCriminalDetails (context, page) async{
   return criminalId;
 }
 
+
+
 void navigateToDetailsScreen (context, Article article, String? heroTag){
   if(article.contentType == 'video'){
     Navigator.push(context, MaterialPageRoute(

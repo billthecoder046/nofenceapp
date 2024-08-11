@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:crimebook/widgets/video_icon.dart';
 
 import '../models/all_crime_models/crime.dart';
+import '../utils/cached_image.dart';
 
 class JusticeCard4 extends StatelessWidget {
   final Crime d;
@@ -11,6 +12,8 @@ class JusticeCard4 extends StatelessWidget {
   const JusticeCard4({Key? key, required this.d, required this.heroTag})
       : super(key: key);
 
+
+  final String noImage = "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -31,8 +34,7 @@ class JusticeCard4 extends StatelessWidget {
                       width: 90,
                       child: Hero(
                         tag: heroTag,
-                        child: Text("Will show image here")
-                        // CustomCacheImage(imageUrl: d.thumbnailImagelUrl, radius: 5.0)
+                        child:  CustomCacheImage(imageUrl: d.evidence?[0]??noImage, radius: 5.0)
                       )
                       ),
 
@@ -98,6 +100,7 @@ class JusticeCard4 extends StatelessWidget {
       
       onTap: () {
         // navigateToDetailsScreen(context, d, heroTag);
+        print("Bilal Saeed");
       }
     );
   }

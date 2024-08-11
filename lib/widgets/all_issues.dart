@@ -58,7 +58,7 @@ class _AllIssuesState extends State<AllIssues> {
           itemBuilder: (_, int index) {
 
             if (index < rb.crimes.length) {
-              if(index %3 == 0 && index != 0) return JusticeCard5(d: rb.crimes[index], heroTag: 'recent$index');
+              // if(index %3 == 0 && index != 0) return JusticeCard5(d: rb.crimes[index], heroTag: 'recent$index');
               if(index %5 == 0 && index != 0) return JusticeCard4(d: rb.crimes[index], heroTag: 'recent$index');
               else return JusticeCard2(d: rb.crimes[index], heroTag: 'recent$index',);
             }

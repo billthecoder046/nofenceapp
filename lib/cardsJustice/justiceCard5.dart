@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:crimebook/widgets/video_icon.dart';
 
 import '../models/all_crime_models/crime.dart';
+import '../utils/cached_image.dart';
 
 class JusticeCard5 extends StatelessWidget {
   final Crime d;
   final String heroTag;
   const JusticeCard5({Key? key, required this.d, required this.heroTag})
       : super(key: key);
+
+
+  final String noImage = "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +35,11 @@ class JusticeCard5 extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     child: Hero(
                       tag: heroTag,
-                      child: Text("Will Show Images"),
-                      // child: CustomCacheImage(
-                      //   imageUrl: d.thumbnailImagelUrl,
-                      //   radius: 5.0,
-                      //   circularShape: false,
-                      // ),
+                      child: CustomCacheImage(
+                        imageUrl: d.evidence?[0]??noImage,
+                        radius: 5.0,
+                        circularShape: false,
+                      ),
                     ),
                   ),
                   VideoIcon(contentType: d.crimeCategory.toString(), iconSize: 80,)

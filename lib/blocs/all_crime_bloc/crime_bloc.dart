@@ -87,6 +87,41 @@ class CrimeBloc extends ChangeNotifier {
       print('Error updating crime: $e');
     }
   }
+  // Function to update only the witnesses list of a crime
+  Future<void> updateCrimeWitnesses(String crimeId, List<String> newWitnessIds) async {
+    try {
+      final docRef = FirebaseFirestore.instance
+          .collection(FirebaseConfig.crimesCollection)
+          .doc(crimeId);
+      await docRef.update({'witnesses': newWitnessIds});
+
+      // Optionally, update the local `crimes` list if needed
+      // final index = crimes.indexWhere((crime) => crime.id == crimeId);
+      // if (index != -1) {
+      //   crimes[index].witnesses = newWitnessIds;
+      // }
+      notifyListeners();
+    } catch (e) {
+      print('Error updating crime witnesses: $e');
+    }
+  }
+  Future<void> updateCrimeEvidences(String crimeId, List<String> newEvidenceIds) async {
+    try {
+      final docRef = FirebaseFirestore.instance
+          .collection(FirebaseConfig.crimesCollection)
+          .doc(crimeId);
+      await docRef.update({'evidence': newEvidenceIds});
+
+      // Optionally, update the local `crimes` list if needed
+      // final index = crimes.indexWhere((crime) => crime.id == crimeId);
+      // if (index != -1) {
+      //   crimes[index].witnesses = newWitnessIds;
+      // }
+      notifyListeners();
+    } catch (e) {
+      print('Error updating crime witnesses: $e');
+    }
+  }
 
   Future<void> deleteCrime(String crimeId) async {
     try {
@@ -240,29 +275,30 @@ class CrimeBloc extends ChangeNotifier {
 
   // Find a crime by its type
   Future<void> getCrimesByCategory(String crimeType, {bool refresh = false}) async {
-    print("My crimeType: ${crimeType}");
+    crimes.clear();
     try {
       if (refresh) {
-        crimes.clear();
+
         _lastCrimeVisible = null;
       }
       _isLoadingCrimes = true;
 
-      QuerySnapshot rawData;
+      late QuerySnapshot rawData;
       if (_lastCrimeVisible == null) {
+
         rawData = await FirebaseFirestore.instance
             .collection(FirebaseConfig.crimesCollection)
             .where('crimeCategory', isEqualTo: crimeType)
             .orderBy('postDate',descending: true)
             .get();
+        print("Visible null and data ${rawData.toString()}");
       } else {
         rawData = await FirebaseFirestore.instance
             .collection(FirebaseConfig.crimesCollection)
             .where('crimeCategory', isEqualTo: crimeType)
-            .orderBy('postDate',descending: true)
-            .startAfter([_lastCrimeVisible!['postDate']])
-            .limit(4)
             .get();
+
+        print("Visible not null and data ${rawData.docs.length}");
       }
 
       if (rawData.docs.length > 0) {
@@ -274,7 +310,7 @@ class CrimeBloc extends ChangeNotifier {
         _isLoadingCrimes = false; // Set loading state to false after fetching
         notifyListeners();
       } else {
-        print("Raw data length is less than 0");
+        print("Raw data length Saim  is less than 0");
         _isLoadingCrimes = false; // Set loading state to false even if no more data
         print('No more crimes available');
         notifyListeners();
@@ -298,6 +334,8 @@ class CrimeBloc extends ChangeNotifier {
   //     return [];
   //   }
   // }
+
+
 
 //Posted by User
 }

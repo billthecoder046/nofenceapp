@@ -23,13 +23,15 @@ class WitnessBloc extends ChangeNotifier {
   // --- Witness Operations ---
 
   // Create a new witness record
-  Future<void> createWitness(Witness newWitness) async {
+  Future<String?> createWitness(Witness newWitness) async {
     try {
-      final docRef = FirebaseFirestore.instance.collection(FirebaseConfig.witnessesCollection).doc();
-      newWitness.id = docRef.id;
+      final docRef = FirebaseFirestore.instance.collection(FirebaseConfig.witnessesCollection).doc(newWitness.id);
+
       await docRef.set(newWitness.toJSON());
       witnesses.add(newWitness);
+
       notifyListeners();
+      return newWitness.id;
     } catch (e) {
       print('Error creating witness: $e');
     }
@@ -107,7 +109,9 @@ class WitnessBloc extends ChangeNotifier {
 
       if (rawData.docs.length > 0) {
         _lastWitnessVisible = rawData.docs[rawData.docs.length - 1];
-        witnesses.addAll(rawData.docs.map((doc) => Witness.fromJSON(doc.data() as Map<String,dynamic>)).toList());
+        witnesses.addAll(rawData.docs.map((doc) {
+          print("Doc data is: ${doc.data()}");
+          return Witness.fromJSON(doc.data() as Map<String,dynamic>);}).toList());
         _isLoadingWitnesses = false; // Set loading state to false after fetching
         notifyListeners();
       } else {
@@ -240,5 +244,35 @@ class WitnessBloc extends ChangeNotifier {
   // Function to find a witness in the 'witnesses' list by name
   Witness? findWitnessByName(String witnessName) {
     return witnesses.firstWhere((witness) => witness.name == witnessName, orElse: () => Witness());
+  }
+
+  Future<void> fetchWitnessesByIds(List<String> witnessIds) async {
+    try {
+      witnesses.clear(); // Clear existing witnesses
+      _isLoadingWitnesses = true; // Set loading state to true
+      print("Fetching withness ${witnessIds.toString()}");
+      // Fetch each witness by ID
+      for (final witnessId in witnessIds) {
+        final docSnapshot = await FirebaseFirestore.instance
+            .collection(FirebaseConfig.witnessesCollection)
+            .doc(witnessId)
+            .get();
+        if (docSnapshot.exists) {
+          print("0");
+          print("Doc data : ${docSnapshot.data().toString()}");
+          witnesses.add(Witness.fromJSON(docSnapshot.data()!));
+          print("1");
+        }else{
+          print("doc not ezist");
+        }
+      }
+
+      print("Witness length: ${witnesses.toString()}");
+
+      _isLoadingWitnesses = false; // Set loading state to false
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching witnesses by IDs: $e');
+    }
   }
 }

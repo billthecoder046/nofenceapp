@@ -167,7 +167,7 @@ class _TabMediumCrimeState extends State<TabMediumCrime> {
         JusticeTab4(
           category: CrimeType.values[4].name,
         ),
-        JusticeTab4(
+        JusticeTab0(
           category: CrimeType.values[5].name,
         ),
         JusticeTab4(

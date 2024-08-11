@@ -72,17 +72,10 @@ class CategoryTab1Bloc extends ChangeNotifier{
     return null;
   }
 
-
-  
-
-
-
   setLoading(bool isloading) {
     _isLoading = isloading;
     notifyListeners();
   }
-
-
 
 
   onRefresh(mounted, String category) {

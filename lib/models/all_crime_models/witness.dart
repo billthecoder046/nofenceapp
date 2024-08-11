@@ -4,7 +4,7 @@ import '../../pages/all_crime_screens/crime.dart';
 
 class Witness {
   String? id; // Unique ID for the witness
-  List<String>? crimeId; // ID of the crime this witness is associated with
+  List<dynamic>? crimeId; // ID of the crime this witness is associated with
  // Type of witness (anonymous or identified)
   String? name; // Name of the witness (can be anonymous)
   String? cnic; // CNIC number
@@ -14,7 +14,8 @@ class Witness {
   bool? isReported; // Flag indicating if the witness has been reported
   int? truthCounter; // Counter for users claiming the witness is trustworthy
   int? falseCounter; // Counter for users claiming the witness is not trustworthy
-  List<String>? reportedBy; // List of user IDs who reported the witness
+  List<dynamic>? reportedBy; // List of user IDs who reported the witness
+  List<dynamic>? evidenceIds;
 
   Witness({
     this.id,
@@ -28,6 +29,7 @@ class Witness {
     this.truthCounter = 0, // Initialize counters to 0
     this.falseCounter = 0,
     this.reportedBy = const [],
+    this.evidenceIds = const [],
   });
 
   Map<String, dynamic> toJSON() {
@@ -43,6 +45,7 @@ class Witness {
       'truthCounter': truthCounter,
       'falseCounter': falseCounter,
       'reportedBy': reportedBy,
+      'evidenceIds':evidenceIds
     };
   }
 
@@ -59,6 +62,7 @@ class Witness {
       truthCounter: json['truthCounter'],
       falseCounter: json['falseCounter'],
       reportedBy: (json['reportedBy'] as List?)?.cast<String>(),
+      evidenceIds: json['evidenceIds']
     );
   }
 }

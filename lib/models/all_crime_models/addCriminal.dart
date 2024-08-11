@@ -158,7 +158,7 @@ class _CriminalDetailsState extends State<CriminalDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select or Add Criminal').tr(),
+        title: Text('Add Criminal').tr(),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 12.0),

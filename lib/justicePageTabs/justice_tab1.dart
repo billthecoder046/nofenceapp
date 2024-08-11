@@ -39,7 +39,7 @@ class _JusticeTab1State extends State<JusticeTab1> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<CategoryTab1Bloc>().onRefresh(mounted, widget.category);
+        context.read<CrimeBloc>().getCrimesByCategory(widget.category);
       },
       child: cb.hasData == false
           ? ListView(
